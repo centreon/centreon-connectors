@@ -16,7 +16,6 @@
 ** For more information : contact@centreon.com
 */
 
-#include <cstdio>
 #include <cstring>
 #include <fstream>
 #include <iostream>
@@ -43,10 +42,11 @@ using namespace com::centreon;
                "1\0" \
                "0\0" \
                " \0" \
-               "Merethis is wonderful\n\0\0\0\0"
+               "Centreon is wonderful\n\0\0\0\0"
 
 /**
- *  Check that connector can execute a script.
+ *  Check that connector can execute a script with a log file.
+ *  The goal is first to verify the log file is well written.
  *
  *  @return 0 on success.
  */
@@ -65,7 +65,7 @@ int main() {
     script_path.c_str(),
     "#!/usr/bin/perl\n" \
     "\n" \
-    "print \"Merethis is wonderful\\n\";\n" \
+    "print \"Centreon is wonderful\\n\";\n" \
     "exit 0;\n");
 
   // Process.
@@ -141,5 +141,5 @@ int main() {
     std::cerr << "error: " << e.what() << std::endl;
   }
 
-  return (retval);
+  return retval;
 }
