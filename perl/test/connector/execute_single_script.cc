@@ -18,18 +18,15 @@
 
 #include <cstdio>
 #include <cstring>
-#include <fstream>
 #include <iostream>
 #include <sstream>
 #include <string>
 #include "com/centreon/clib.hh"
-#include "com/centreon/exceptions/basic.hh"
 #include "com/centreon/io/file_stream.hh"
 #include "com/centreon/process.hh"
+#include "com/centreon/exceptions/basic.hh"
 #include "test/connector/misc.hh"
 #include "test/connector/paths.hh"
-
-#define LOG_FILE "/tmp/toto"
 
 using namespace com::centreon;
 
@@ -51,13 +48,6 @@ using namespace com::centreon;
  *  @return 0 on success.
  */
 int main() {
-  // If the log file exists, we remove it.
-  std::ifstream f(LOG_FILE);
-  if (f.good()) {
-    f.close();
-    remove(LOG_FILE);
-  }
-
   clib::load();
   // Write Perl script.
   std::string script_path(io::file_stream::temp_path());
@@ -72,7 +62,7 @@ int main() {
   process p;
   p.enable_stream(process::in, true);
   p.enable_stream(process::out, true);
-  p.exec(CONNECTOR_PERL_BINARY " --log-file " LOG_FILE);
+  p.exec(CONNECTOR_PERL_BINARY);
 
   // Write command.
   std::ostringstream oss;
@@ -121,20 +111,6 @@ int main() {
       throw (basic_error()
              << "invalid output: size=" << output.size()
              << ", output=" << replace_null(output));
-
-    std::string line;
-    std::ifstream file(LOG_FILE);
-    if (file.is_open()) {
-      getline(file, line);
-      if (line.find("[info] Centreon Perl Connector 1.1.2 starting") == std::string::npos)
-        throw (basic_error()
-               << "bad content: the first line does not start with 'Centreon SSH Connector 1.1.2 starting'");
-      file.close();
-    }
-    else {
-      throw (basic_error()
-             << "the file " LOG_FILE " has not been created.");
-    }
   }
   catch (std::exception const& e) {
     retval = 1;
