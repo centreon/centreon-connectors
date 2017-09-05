@@ -148,8 +148,8 @@ void options::_init() {
 
   // Log file.
   {
-    misc::argument& arg(_arguments['L']);
-    arg.set_name('L');
+    misc::argument& arg(_arguments['l']);
+    arg.set_name('l');
     arg.set_long_name("log-file");
     arg.set_description(log_file_description);
     arg.set_has_value(true);
