@@ -16,6 +16,7 @@
 ** For more information : contact@centreon.com
 */
 
+#include "com/centreon/connector/ssh/policy.hh"
 #include <cstdio>
 #include <cstdlib>
 #include <memory>
@@ -23,7 +24,6 @@
 #include "com/centreon/connector/ssh/checks/check.hh"
 #include "com/centreon/connector/ssh/checks/result.hh"
 #include "com/centreon/connector/ssh/multiplexer.hh"
-#include "com/centreon/connector/ssh/policy.hh"
 #include "com/centreon/connector/ssh/sessions/session.hh"
 #include "com/centreon/delayed_delete.hh"
 #include "com/centreon/logging/logger.hh"
@@ -34,10 +34,10 @@ using namespace com::centreon::connector::ssh;
 extern volatile bool should_exit;
 
 /**************************************
-*                                     *
-*           Public Methods            *
-*                                     *
-**************************************/
+ *                                     *
+ *           Public Methods            *
+ *                                     *
+ **************************************/
 
 /**
  *  Default constructor.
@@ -56,40 +56,37 @@ policy::policy() : _sin(stdin), _sout(stdout) {
 /**
  *  Destructor.
  */
-policy::~policy() throw () {
+policy::~policy() throw() {
   try {
     // Remove from multiplexer.
     multiplexer::instance().handle_manager::remove(&_sin);
     multiplexer::instance().handle_manager::remove(&_sout);
+  } catch (...) {
   }
-  catch (...) {}
 
   // Close checks.
-  for (std::map<
-         unsigned long long,
-         std::pair<checks::check*, sessions::session*> >::iterator
-         it = _checks.begin(),
-         end = _checks.end();
-       it != end;
-       ++it) {
+  for (std::map<unsigned long long,
+                std::pair<checks::check*, sessions::session*> >::iterator
+           it = _checks.begin(),
+           end = _checks.end();
+       it != end; ++it) {
     try {
       it->second.first->unlisten(this);
+    } catch (...) {
     }
-    catch (...) {}
     delete it->second.first;
   }
   _checks.clear();
 
   // Close sessions.
   for (std::map<sessions::credentials, sessions::session*>::iterator
-         it = _sessions.begin(),
-         end = _sessions.end();
-       it != end;
-       ++it) {
+           it = _sessions.begin(),
+           end = _sessions.end();
+       it != end; ++it) {
     try {
       it->second->close();
+    } catch (...) {
     }
-    catch (...) {}
     delete it->second;
   }
 }
@@ -100,7 +97,6 @@ policy::~policy() throw () {
 void policy::on_eof() {
   log_info(logging::low) << "stdin is closed";
   on_quit();
-  return ;
 }
 
 /**
@@ -116,14 +112,11 @@ void policy::on_error(unsigned long long cmd_id, char const* msg) {
     r.set_executed(false);
     r.set_error(msg);
     on_result(r);
-  }
-  else {
-    log_info(logging::low)
-      << "error occurred while parsing stdin";
+  } else {
+    log_info(logging::low) << "error occurred while parsing stdin";
     _error = true;
     on_quit();
   }
-  return ;
 }
 
 /**
@@ -141,24 +134,23 @@ void policy::on_error(unsigned long long cmd_id, char const* msg) {
  *  @param[in] skip_stderr Ignore all or first n error lines.
  *  @param[in] use_ipv6    Version of ip protocol to use.
  */
-void policy::on_execute(
-               unsigned long long cmd_id,
-               time_t timeout,
-               std::string const& host,
-               unsigned short port,
-               std::string const& user,
-               std::string const& password,
-               std::string const& key,
-               std::list<std::string> const& cmds,
-               int skip_stdout,
-               int skip_stderr,
-               bool use_ipv6) {
+void policy::on_execute(unsigned long long cmd_id,
+                        time_t timeout,
+                        std::string const& host,
+                        unsigned short port,
+                        std::string const& user,
+                        std::string const& password,
+                        std::string const& key,
+                        std::list<std::string> const& cmds,
+                        int skip_stdout,
+                        int skip_stderr,
+                        bool use_ipv6) {
   try {
     // Log message.
-    log_info(logging::medium) << "got request to execute check "
-      << cmd_id << " on session " << user << "@" << host
-      << " (timeout " << timeout << ", first command \""
-      << cmds.front() << "\")";
+    log_info(logging::medium)
+        << "got request to execute check " << cmd_id << " on session " << user
+        << "@" << host << " (timeout " << timeout << ", first command \""
+        << cmds.front() << "\")";
 
     // Credentials.
     sessions::credentials creds;
@@ -175,9 +167,9 @@ void policy::on_execute(
     std::map<sessions::credentials, sessions::session*>::iterator it;
     it = _sessions.find(creds);
     if (it == _sessions.end()) {
-      log_info(logging::low) << "creating session for "
-        << user << "@" << host << ":" << port;
-      std::auto_ptr<sessions::session> sess(new sessions::session(creds));
+      log_info(logging::low)
+          << "creating session for " << user << "@" << host << ":" << port;
+      std::unique_ptr<sessions::session> sess{new sessions::session(creds)};
       sess->connect(use_ipv6);
       _sessions[creds] = sess.get();
       sess.release();
@@ -185,9 +177,8 @@ void policy::on_execute(
     }
 
     // Create check object.
-    std::auto_ptr<checks::check> chk(new checks::check(
-                                                   skip_stdout,
-                                                   skip_stderr));
+    std::unique_ptr<checks::check> chk{
+        new checks::check(skip_stdout, skip_stderr)};
     chk->listen(this);
     _checks[cmd_id] = std::make_pair(chk.get(), it->second);
     checks::check* chk_ptr(chk.release());
@@ -196,24 +187,21 @@ void policy::on_execute(
     // on_result() and mutex must be available).
     lock.unlock();
     chk_ptr->execute(*it->second, cmd_id, cmds, timeout);
-  }
-  catch (std::exception const& e) {
-    log_error(logging::low) << "could not launch check ID "
-      << cmd_id << " on host " << host << " because an error occurred: "
-      << e.what();
+  } catch (std::exception const& e) {
+    log_error(logging::low)
+        << "could not launch check ID " << cmd_id << " on host " << host
+        << " because an error occurred: " << e.what();
+    checks::result r;
+    r.set_command_id(cmd_id);
+    on_result(r);
+  } catch (...) {
+    log_error(logging::low)
+        << "could not launch check ID " << cmd_id << " on host " << host
+        << " because an error occurred";
     checks::result r;
     r.set_command_id(cmd_id);
     on_result(r);
   }
-  catch (...) {
-    log_error(logging::low) << "could not launch check ID "
-      << cmd_id << " on host " << host << " because an error occurred";
-    checks::result r;
-    r.set_command_id(cmd_id);
-    on_result(r);
-  }
-
-  return ;
 }
 
 /**
@@ -221,11 +209,9 @@ void policy::on_execute(
  */
 void policy::on_quit() {
   // Exiting.
-  log_info(logging::low)
-    << "quit request received";
+  log_info(logging::low) << "quit request received";
   should_exit = true;
   multiplexer::instance().handle_manager::remove(&_sin);
-  return ;
 }
 
 /**
@@ -238,62 +224,59 @@ void policy::on_result(checks::result const& r) {
   concurrency::locker lock(&_mutex);
 
   // Remove check from list.
-  std::map<unsigned long long, std::pair<checks::check*, sessions::session*> >::iterator chk;
+  std::map<unsigned long long,
+           std::pair<checks::check*, sessions::session*> >::iterator chk;
   chk = _checks.find(r.get_command_id());
   if (chk == _checks.end())
-    log_error(logging::medium) << "got result of check "
-      << r.get_command_id() << " which is not registered";
+    log_error(logging::medium) << "got result of check " << r.get_command_id()
+                               << " which is not registered";
   else {
     try {
       chk->second.first->unlisten(this);
       chk->second.second->unlisten(chk->second.first);
+    } catch (...) {
     }
-    catch (...) {}
     delete chk->second.first;
     sessions::session* sess(chk->second.second);
     _checks.erase(chk);
 
     // Check session.
     if (!sess->is_connected()) {
-      log_debug(logging::medium) << "session " << sess << " is not"
-           " connected, checking if any check working with it remains";
+      log_debug(logging::medium)
+          << "session " << sess
+          << " is not"
+             " connected, checking if any check working with it remains";
       bool found(false);
-      for (std::map<unsigned long long, std::pair<checks::check*, sessions::session*> >::iterator
-             it = _checks.begin(),
-             end = _checks.end();
-           it != end;
-           ++it)
+      for (std::map<unsigned long long,
+                    std::pair<checks::check*, sessions::session*> >::iterator
+               it = _checks.begin(),
+               end = _checks.end();
+           it != end; ++it)
         if (it->second.second == sess) {
           found = true;
           break;
         }
       if (!found) {
-        std::map<sessions::credentials, sessions::session*>::iterator
-          it, end;
-        for (it = _sessions.begin(), end = _sessions.end();
-             it != end;
-             ++it) {
+        std::map<sessions::credentials, sessions::session*>::iterator it, end;
+        for (it = _sessions.begin(), end = _sessions.end(); it != end; ++it) {
           if (it->second == sess)
-            break ;
+            break;
         }
         if (it == end)
-          log_error(logging::high) << "session " << sess
-            << " was not found in policy list, deleting anyway";
+          log_error(logging::high)
+              << "session " << sess
+              << " was not found in policy list, deleting anyway";
         else {
-          log_info(logging::high) << "session "
-           << it->first.get_user() << "@" << it->first.get_host()
-           << ":" << it->first.get_port()
-           << " that is not connected and has "
-              "no check running will be deleted";
+          log_info(logging::high)
+              << "session " << it->first.get_user() << "@"
+              << it->first.get_host() << ":" << it->first.get_port()
+              << " that is not connected and has "
+                 "no check running will be deleted";
           _sessions.erase(it);
         }
-        std::auto_ptr<delayed_delete<sessions::session> >
-          dd(new delayed_delete<sessions::session>(sess));
-        multiplexer::instance().task_manager::add(
-          dd.get(),
-          0,
-          true,
-          true);
+        std::unique_ptr<delayed_delete<sessions::session> > dd{
+            new delayed_delete<sessions::session>(sess)};
+        multiplexer::instance().task_manager::add(dd.get(), 0, true, true);
         dd.release();
       }
     }
@@ -301,8 +284,6 @@ void policy::on_result(checks::result const& r) {
 
   // Send check result back to monitoring engine.
   _reporter.send_result(r);
-
-  return ;
 }
 
 /**
@@ -311,9 +292,8 @@ void policy::on_result(checks::result const& r) {
 void policy::on_version() {
   // Report version 1.0.
   log_info(logging::medium)
-    << "monitoring engine requested protocol version, sending 1.0";
+      << "monitoring engine requested protocol version, sending 1.0";
   _reporter.send_version(1, 0);
-  return ;
 }
 
 /**
@@ -335,17 +315,16 @@ bool policy::run() {
   log_info(logging::low) << "waiting for checks to terminate";
   while (!_checks.empty()) {
     log_debug(logging::high)
-      << "multiplexing remaining checks (" << _checks.size() << ")";
+        << "multiplexing remaining checks (" << _checks.size() << ")";
     multiplexer::instance().multiplex();
   }
 
   // Run as long as some data remains.
-  log_info(logging::low)
-    << "reporting last data to monitoring engine";
+  log_info(logging::low) << "reporting last data to monitoring engine";
   while (_reporter.can_report() && _reporter.want_write(_sout)) {
     log_debug(logging::high) << "multiplexing remaining data";
     multiplexer::instance().multiplex();
   }
 
-  return (!_error);
+  return !_error;
 }
