@@ -161,7 +161,7 @@ void policy::on_execute(unsigned long long cmd_id,
     creds.set_key(key);
 
     // Object lock.
-    concurrency::locker lock(&_mutex);
+    std::unique_lock<std::mutex> lock(_mutex);
 
     // Find session.
     std::map<sessions::credentials, sessions::session*>::iterator it;
@@ -221,7 +221,7 @@ void policy::on_quit() {
  */
 void policy::on_result(checks::result const& r) {
   // Object lock.
-  concurrency::locker lock(&_mutex);
+  std::lock_guard<std::mutex> lock(_mutex);
 
   // Remove check from list.
   std::map<unsigned long long,
