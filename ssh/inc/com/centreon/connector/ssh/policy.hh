@@ -51,8 +51,8 @@ class policy : public orders::listener, public checks::listener {
   policy();
   ~policy() throw();
   void on_eof();
-  void on_error(unsigned long long cmd_id, char const* msg);
-  void on_execute(unsigned long long cmd_id,
+  void on_error(uint64_t cmd_id, char const* msg);
+  void on_execute(uint64_t cmd_id,
                   time_t timeout,
                   std::string const& host,
                   unsigned short port,
@@ -72,7 +72,7 @@ class policy : public orders::listener, public checks::listener {
   policy(policy const& p);
   policy& operator=(policy const& p);
 
-  std::map<unsigned long long, std::pair<checks::check*, sessions::session*> >
+  std::map<uint64_t, std::pair<checks::check*, sessions::session*> >
       _checks;
   bool _error;
   std::mutex _mutex;

@@ -329,12 +329,6 @@ if (WITH_TESTING)
     "${TEST_DIR}/checks/timeout/ctor.cc")
   target_link_libraries("${TEST_NAME}" "${CONNECTORLIB}")
   add_test("${TEST_NAME}" "${TEST_NAME}")
-  #   Copy constructor.
-  set(TEST_NAME "checks_timeout_ctor_copy")
-  add_executable("${TEST_NAME}"
-    "${TEST_DIR}/checks/timeout/ctor_copy.cc")
-  target_link_libraries("${TEST_NAME}" "${CONNECTORLIB}")
-  add_test("${TEST_NAME}" "${TEST_NAME}")
   #   Assignment operator.
   set(TEST_NAME "checks_timeout_assignment")
   add_executable("${TEST_NAME}"
@@ -548,7 +542,7 @@ if (WITH_TESTING)
   #
   # Process tests.
   #
-  set(TEST_LIBRARIES ${CLIB_LIBRARIES})
+  set(TEST_LIBRARIES ${CLIB_LIBRARIES} pthread)
   # Help.
   add_test("connector_help" "${CONNECTOR}" "--help")
   # Version.

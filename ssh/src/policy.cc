@@ -16,11 +16,11 @@
 ** For more information : contact@centreon.com
 */
 
+#include <sstream>
 #include "com/centreon/connector/ssh/policy.hh"
 #include <cstdio>
 #include <cstdlib>
 #include <memory>
-#include "com/centreon/concurrency/locker.hh"
 #include "com/centreon/connector/ssh/checks/check.hh"
 #include "com/centreon/connector/ssh/checks/result.hh"
 #include "com/centreon/connector/ssh/multiplexer.hh"
@@ -44,19 +44,21 @@ extern volatile bool should_exit;
  */
 policy::policy() : _sin(stdin), _sout(stdout) {
   // Send information back.
+  system("echo 'policy::policy... 1' >> /tmp/titi");
   multiplexer::instance().handle_manager::add(&_sout, &_reporter);
 
   // Listen orders.
   _parser.listen(this);
 
   // Parser listens stdin.
+  system("echo 'policy::policy... 2' >> /tmp/titi");
   multiplexer::instance().handle_manager::add(&_sin, &_parser);
 }
 
 /**
  *  Destructor.
  */
-policy::~policy() throw() {
+policy::~policy() noexcept {
   try {
     // Remove from multiplexer.
     multiplexer::instance().handle_manager::remove(&_sin);
@@ -65,16 +67,11 @@ policy::~policy() throw() {
   }
 
   // Close checks.
-  for (std::map<unsigned long long,
-                std::pair<checks::check*, sessions::session*> >::iterator
-           it = _checks.begin(),
-           end = _checks.end();
-       it != end; ++it) {
+  for (auto& c : _checks) {
     try {
-      it->second.first->unlisten(this);
-    } catch (...) {
-    }
-    delete it->second.first;
+      c.second.first->unlisten(this);
+    } catch (...) {}
+    delete c.second.first;
   }
   _checks.clear();
 
@@ -105,7 +102,7 @@ void policy::on_eof() {
  *  @param[in] cmd_id Command ID.
  *  @param[in] msg    Associated message.
  */
-void policy::on_error(unsigned long long cmd_id, char const* msg) {
+void policy::on_error(uint64_t cmd_id, char const* msg) {
   if (cmd_id) {
     checks::result r;
     r.set_command_id(cmd_id);
@@ -134,7 +131,7 @@ void policy::on_error(unsigned long long cmd_id, char const* msg) {
  *  @param[in] skip_stderr Ignore all or first n error lines.
  *  @param[in] use_ipv6    Version of ip protocol to use.
  */
-void policy::on_execute(unsigned long long cmd_id,
+void policy::on_execute(uint64_t cmd_id,
                         time_t timeout,
                         std::string const& host,
                         unsigned short port,
@@ -164,8 +161,7 @@ void policy::on_execute(unsigned long long cmd_id,
     std::unique_lock<std::mutex> lock(_mutex);
 
     // Find session.
-    std::map<sessions::credentials, sessions::session*>::iterator it;
-    it = _sessions.find(creds);
+    auto it = _sessions.find(creds);
     if (it == _sessions.end()) {
       log_info(logging::low)
           << "creating session for " << user << "@" << host << ":" << port;
@@ -177,15 +173,21 @@ void policy::on_execute(unsigned long long cmd_id,
     }
 
     // Create check object.
-    std::unique_ptr<checks::check> chk{
-        new checks::check(skip_stdout, skip_stderr)};
-    chk->listen(this);
-    _checks[cmd_id] = std::make_pair(chk.get(), it->second);
-    checks::check* chk_ptr(chk.release());
+    checks::check* chk_ptr = new checks::check(skip_stdout, skip_stderr);
+    chk_ptr->listen(this);
+    _checks[cmd_id] = std::make_pair(chk_ptr, it->second);
 
     // Release lock and run copied pointer (we might be called in
     // on_result() and mutex must be available).
     lock.unlock();
+
+    for (auto& el : cmds) {
+      std::ostringstream oss;
+      oss << "echo 'policy::on_execute... "
+        << el << " ' >> /tmp/titi";
+      system(oss.str().c_str());
+    }
+
     chk_ptr->execute(*it->second, cmd_id, cmds, timeout);
   } catch (std::exception const& e) {
     log_error(logging::low)
@@ -224,7 +226,7 @@ void policy::on_result(checks::result const& r) {
   std::lock_guard<std::mutex> lock(_mutex);
 
   // Remove check from list.
-  std::map<unsigned long long,
+  std::map<uint64_t,
            std::pair<checks::check*, sessions::session*> >::iterator chk;
   chk = _checks.find(r.get_command_id());
   if (chk == _checks.end())
@@ -247,7 +249,7 @@ void policy::on_result(checks::result const& r) {
           << " is not"
              " connected, checking if any check working with it remains";
       bool found(false);
-      for (std::map<unsigned long long,
+      for (std::map<uint64_t,
                     std::pair<checks::check*, sessions::session*> >::iterator
                it = _checks.begin(),
                end = _checks.end();
@@ -274,10 +276,10 @@ void policy::on_result(checks::result const& r) {
                  "no check running will be deleted";
           _sessions.erase(it);
         }
-        std::unique_ptr<delayed_delete<sessions::session> > dd{
-            new delayed_delete<sessions::session>(sess)};
-        multiplexer::instance().task_manager::add(dd.get(), 0, true, true);
-        dd.release();
+        delayed_delete<sessions::session>* dd =
+            new delayed_delete<sessions::session>(sess);
+        system("echo 'policy::on_result... 1' >> /tmp/titi");
+        multiplexer::instance().task_manager::add(dd, 0, true, true);
       }
     }
   }
@@ -305,20 +307,33 @@ bool policy::run() {
   // No error occurred yet.
   _error = false;
 
+  system("echo 'policy::run1...' >> /tmp/titi");
   // Run multiplexer.
   while (!should_exit) {
     log_debug(logging::high) << "multiplexing";
     multiplexer::instance().multiplex();
   }
 
+  system("echo 'policy::run2...' >> /tmp/titi");
   // Run as long as a check remains.
   log_info(logging::low) << "waiting for checks to terminate";
   while (!_checks.empty()) {
+    //FIXME DBR
+    std::ostringstream oss;
+    oss << "echo '_checks not empty1 : " << _checks.size() << "' >> /tmp/titi";
+    system(oss.str().c_str());
+
     log_debug(logging::high)
         << "multiplexing remaining checks (" << _checks.size() << ")";
+    system("echo '_checks not empty2...' >> /tmp/titi");
     multiplexer::instance().multiplex();
+    //FIXME DBR
+    oss.str("");
+    oss << "echo '_checks not empty3 : " << _checks.size() << "' >> /tmp/titi";
+    system(oss.str().c_str());
   }
 
+  system("echo 'policy::run3...' >> /tmp/titi");
   // Run as long as some data remains.
   log_info(logging::low) << "reporting last data to monitoring engine";
   while (_reporter.can_report() && _reporter.want_write(_sout)) {
@@ -326,5 +341,6 @@ bool policy::run() {
     multiplexer::instance().multiplex();
   }
 
+  system("echo 'policy::run4...' >> /tmp/titi");
   return !_error;
 }
