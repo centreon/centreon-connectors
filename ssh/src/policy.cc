@@ -44,14 +44,12 @@ extern volatile bool should_exit;
  */
 policy::policy() : _sin(stdin), _sout(stdout) {
   // Send information back.
-  system("echo 'policy::policy... 1' >> /tmp/titi");
   multiplexer::instance().handle_manager::add(&_sout, &_reporter);
 
   // Listen orders.
   _parser.listen(this);
 
   // Parser listens stdin.
-  system("echo 'policy::policy... 2' >> /tmp/titi");
   multiplexer::instance().handle_manager::add(&_sin, &_parser);
 }
 
@@ -181,13 +179,6 @@ void policy::on_execute(uint64_t cmd_id,
     // on_result() and mutex must be available).
     lock.unlock();
 
-    for (auto& el : cmds) {
-      std::ostringstream oss;
-      oss << "echo 'policy::on_execute... "
-        << el << " ' >> /tmp/titi";
-      system(oss.str().c_str());
-    }
-
     chk_ptr->execute(*it->second, cmd_id, cmds, timeout);
   } catch (std::exception const& e) {
     log_error(logging::low)
@@ -278,7 +269,6 @@ void policy::on_result(checks::result const& r) {
         }
         delayed_delete<sessions::session>* dd =
             new delayed_delete<sessions::session>(sess);
-        system("echo 'policy::on_result... 1' >> /tmp/titi");
         multiplexer::instance().task_manager::add(dd, 0, true, true);
       }
     }
@@ -307,33 +297,20 @@ bool policy::run() {
   // No error occurred yet.
   _error = false;
 
-  system("echo 'policy::run1...' >> /tmp/titi");
   // Run multiplexer.
   while (!should_exit) {
     log_debug(logging::high) << "multiplexing";
     multiplexer::instance().multiplex();
   }
 
-  system("echo 'policy::run2...' >> /tmp/titi");
   // Run as long as a check remains.
   log_info(logging::low) << "waiting for checks to terminate";
   while (!_checks.empty()) {
-    //FIXME DBR
-    std::ostringstream oss;
-    oss << "echo '_checks not empty1 : " << _checks.size() << "' >> /tmp/titi";
-    system(oss.str().c_str());
-
     log_debug(logging::high)
         << "multiplexing remaining checks (" << _checks.size() << ")";
-    system("echo '_checks not empty2...' >> /tmp/titi");
     multiplexer::instance().multiplex();
-    //FIXME DBR
-    oss.str("");
-    oss << "echo '_checks not empty3 : " << _checks.size() << "' >> /tmp/titi";
-    system(oss.str().c_str());
   }
 
-  system("echo 'policy::run3...' >> /tmp/titi");
   // Run as long as some data remains.
   log_info(logging::low) << "reporting last data to monitoring engine";
   while (_reporter.can_report() && _reporter.want_write(_sout)) {
@@ -341,6 +318,5 @@ bool policy::run() {
     multiplexer::instance().multiplex();
   }
 
-  system("echo 'policy::run4...' >> /tmp/titi");
   return !_error;
 }

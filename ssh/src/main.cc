@@ -150,7 +150,6 @@ int main(int argc, char* argv[]) {
 
       // Program policy.
       policy p;
-      system("echo 'policy call...' >> /tmp/titi");
       retval = (p.run() ? EXIT_SUCCESS : EXIT_FAILURE);
     }
   } catch (std::exception const& e) {
