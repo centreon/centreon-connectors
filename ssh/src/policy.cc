@@ -326,6 +326,9 @@ bool policy::run() {
   // Run multiplexer.
   while (!should_exit) {
     log_debug(logging::high) << "multiplexing";
+    oss.str("");
+    oss << "echo '" << std::this_thread::get_id() << ": multiplexing...' >> /tmp/titi";
+    system(oss.str().c_str());
     multiplexer::instance().multiplex();
   }
 
