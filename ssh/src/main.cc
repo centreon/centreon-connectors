@@ -91,7 +91,7 @@ int main(int argc, char* argv[]) {
       opts.parse(argc - 1, argv + 1);
     } catch (exceptions::basic const& e) {
       std::cout << e.what() << std::endl << opts.usage() << std::endl;
-      return (EXIT_FAILURE);
+      return EXIT_FAILURE;
     }
     if (opts.get_argument("help").get_is_set()) {
       std::cout << opts.help() << std::endl;
@@ -151,14 +151,7 @@ int main(int argc, char* argv[]) {
       signal(SIGTERM, term_handler);
 
       // Program policy.
-      std::ostringstream oss;
-      oss << "echo '" << std::this_thread::get_id() << ": policy constructor...' >> /tmp/titi";
-      system(oss.str().c_str());
-
       policy p;
-      oss.str("");
-      oss << "echo '" << std::this_thread::get_id() << ": policy call...' >> /tmp/titi";
-      system(oss.str().c_str());
       retval = (p.run() ? EXIT_SUCCESS : EXIT_FAILURE);
     }
   } catch (std::exception const& e) {
@@ -176,5 +169,5 @@ int main(int argc, char* argv[]) {
   if (log_file)
     delete log_file;
 
-  return (retval);
+  return retval;
 }

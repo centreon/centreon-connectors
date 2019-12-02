@@ -16,8 +16,6 @@
 ** For more information : contact@centreon.com
 */
 
-#include <thread>
-#include <sstream>
 #include "com/centreon/connector/ssh/sessions/socket_handle.hh"
 #include <sys/socket.h>
 #include <sys/types.h>
@@ -41,18 +39,12 @@ using namespace com::centreon::connector::ssh::sessions;
  *  @param[in] handl Native socket descriptor.
  */
 socket_handle::socket_handle(native_handle handl) : _handl(handl) {
-  std::ostringstream oss;
-  oss << "echo '" << std::this_thread::get_id() << ": socket_handle::socket_handle' >> /tmp/titi";
-  system(oss.str().c_str());
 }
 
 /**
  *  Destructor.
  */
 socket_handle::~socket_handle() noexcept {
-  std::ostringstream oss;
-  oss << "echo '" << std::this_thread::get_id() << ": socket_handle::~socket_handle' >> /tmp/titi";
-  system(oss.str().c_str());
   this->close();
 }
 
@@ -60,16 +52,8 @@ socket_handle::~socket_handle() noexcept {
  *  Close socket descriptor.
  */
 void socket_handle::close() {
-  std::ostringstream oss;
-  oss << "echo '" << std::this_thread::get_id()
-      << ": socket_handle::close' >> /tmp/titi";
-  system(oss.str().c_str());
   if (_handl != native_handle_null) {
     shutdown(_handl, SHUT_RDWR);
-    oss.str("");
-    oss << "echo '" << std::this_thread::get_id()
-        << ": socket_handle::close REALLY' >> /tmp/titi";
-    system(oss.str().c_str());
     ::close(_handl);
     _handl = native_handle_null;
   }
