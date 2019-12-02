@@ -16,6 +16,7 @@
 ** For more information : contact@centreon.com
 */
 
+#include <thread>
 #include <sstream>
 #include "com/centreon/connector/ssh/policy.hh"
 #include <cstdio>
@@ -44,14 +45,18 @@ extern volatile bool should_exit;
  */
 policy::policy() : _sin(stdin), _sout(stdout) {
   // Send information back.
-  system("echo 'policy::policy... 1' >> /tmp/titi");
+  std::ostringstream oss;
+  oss << "echo '" << std::this_thread::get_id() << ": policy::policy... 1' >> /tmp/titi";
+  system(oss.str().c_str());
   multiplexer::instance().handle_manager::add(&_sout, &_reporter);
 
   // Listen orders.
   _parser.listen(this);
 
   // Parser listens stdin.
-  system("echo 'policy::policy... 2' >> /tmp/titi");
+  oss.str("");
+  oss << "echo '" << std::this_thread::get_id() << ": policy::policy... 2' >> /tmp/titi";
+  system(oss.str().c_str());
   multiplexer::instance().handle_manager::add(&_sin, &_parser);
 }
 
@@ -73,6 +78,9 @@ policy::~policy() noexcept {
     } catch (...) {}
     delete c.second.first;
   }
+  std::ostringstream oss;
+  oss << "echo '" << std::this_thread::get_id() << ": policy::~policy checks clear' >> /tmp/titi";
+  system(oss.str().c_str());
   _checks.clear();
 
   // Close sessions.
@@ -183,7 +191,7 @@ void policy::on_execute(uint64_t cmd_id,
 
     for (auto& el : cmds) {
       std::ostringstream oss;
-      oss << "echo 'policy::on_execute... "
+      oss << "echo '" << std::this_thread::get_id() << ": policy::on_execute... "
         << el << " ' >> /tmp/titi";
       system(oss.str().c_str());
     }
@@ -240,6 +248,9 @@ void policy::on_result(checks::result const& r) {
     }
     delete chk->second.first;
     sessions::session* sess(chk->second.second);
+    std::ostringstream oss;
+    oss << "echo '" << std::this_thread::get_id() << ": policy::on_result checks erase' >> /tmp/titi";
+    system(oss.str().c_str());
     _checks.erase(chk);
 
     // Check session.
@@ -278,7 +289,9 @@ void policy::on_result(checks::result const& r) {
         }
         delayed_delete<sessions::session>* dd =
             new delayed_delete<sessions::session>(sess);
-        system("echo 'policy::on_result... 1' >> /tmp/titi");
+        std::ostringstream oss;
+        oss << "echo '" << std::this_thread::get_id() << ": policy::on_result... 1' >> /tmp/titi";
+        system(oss.str().c_str());
         multiplexer::instance().task_manager::add(dd, 0, true, true);
       }
     }
@@ -307,33 +320,44 @@ bool policy::run() {
   // No error occurred yet.
   _error = false;
 
-  system("echo 'policy::run1...' >> /tmp/titi");
+  std::ostringstream oss;
+  oss << "echo '" << std::this_thread::get_id() << ": policy::run1...' >> /tmp/titi";
+  system(oss.str().c_str());
   // Run multiplexer.
   while (!should_exit) {
     log_debug(logging::high) << "multiplexing";
     multiplexer::instance().multiplex();
   }
 
-  system("echo 'policy::run2...' >> /tmp/titi");
+  oss.str("");
+  oss << "echo '" << std::this_thread::get_id() << ": policy::run2...' >> /tmp/titi";
+  system(oss.str().c_str());
   // Run as long as a check remains.
   log_info(logging::low) << "waiting for checks to terminate";
   while (!_checks.empty()) {
-    //FIXME DBR
-    std::ostringstream oss;
-    oss << "echo '_checks not empty1 : " << _checks.size() << "' >> /tmp/titi";
+    // FIXME DBR
+    oss.str("");
+    oss << "echo '" << std::this_thread::get_id()
+        << ": _checks not empty1 : " << _checks.size() << "' >> /tmp/titi";
     system(oss.str().c_str());
 
     log_debug(logging::high)
         << "multiplexing remaining checks (" << _checks.size() << ")";
-    system("echo '_checks not empty2...' >> /tmp/titi");
-    multiplexer::instance().multiplex();
-    //FIXME DBR
     oss.str("");
-    oss << "echo '_checks not empty3 : " << _checks.size() << "' >> /tmp/titi";
+    oss << "echo '" << std::this_thread::get_id()
+        << ": _checks not empty2 : " << _checks.size() << "' >> /tmp/titi";
+    system(oss.str().c_str());
+    multiplexer::instance().multiplex();
+    // FIXME DBR
+    oss.str("");
+    oss << "echo '" << std::this_thread::get_id()
+        << ": _checks not empty3 : " << _checks.size() << "' >> /tmp/titi";
     system(oss.str().c_str());
   }
 
-  system("echo 'policy::run3...' >> /tmp/titi");
+  oss.str("");
+  oss << "echo '" << std::this_thread::get_id() << ": policy::run3...' >> /tmp/titi";
+  system(oss.str().c_str());
   // Run as long as some data remains.
   log_info(logging::low) << "reporting last data to monitoring engine";
   while (_reporter.can_report() && _reporter.want_write(_sout)) {
@@ -341,6 +365,8 @@ bool policy::run() {
     multiplexer::instance().multiplex();
   }
 
-  system("echo 'policy::run4...' >> /tmp/titi");
+  oss.str("");
+  oss << "echo '" << std::this_thread::get_id() << ": policy::run4...' >> /tmp/titi";
+  system(oss.str().c_str());
   return !_error;
 }

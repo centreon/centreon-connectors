@@ -35,7 +35,7 @@ namespace          sessions {
   public:
                    socket_handle(
                      native_handle handl = native_handle_null);
-                   ~socket_handle() throw ();
+                   ~socket_handle() noexcept;
     void           close();
     native_handle  get_native_handle();
     unsigned long  read(void* data, unsigned long size);

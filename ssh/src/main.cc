@@ -16,6 +16,8 @@
 ** For more information : contact@centreon.com
 */
 
+#include <thread>
+#include <sstream>
 #include <cerrno>
 #include <csignal>
 #include <cstdio>
@@ -149,8 +151,14 @@ int main(int argc, char* argv[]) {
       signal(SIGTERM, term_handler);
 
       // Program policy.
+      std::ostringstream oss;
+      oss << "echo '" << std::this_thread::get_id() << ": policy constructor...' >> /tmp/titi";
+      system(oss.str().c_str());
+
       policy p;
-      system("echo 'policy call...' >> /tmp/titi");
+      oss.str("");
+      oss << "echo '" << std::this_thread::get_id() << ": policy call...' >> /tmp/titi";
+      system(oss.str().c_str());
       retval = (p.run() ? EXIT_SUCCESS : EXIT_FAILURE);
     }
   } catch (std::exception const& e) {

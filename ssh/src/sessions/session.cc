@@ -16,6 +16,8 @@
 ** For more information : contact@centreon.com
 */
 
+#include <thread>
+#include <sstream>
 #include "com/centreon/connector/ssh/sessions/session.hh"
 #include <arpa/inet.h>
 #include <fcntl.h>
@@ -54,6 +56,7 @@ session::session(credentials const& creds)
       _step(session_startup),
       _step_string("startup") {
   // Create session instance.
+  //std::lock_guard<std::mutex> lock(_session_m);
   _session = libssh2_session_init();
   if (!_session)
     throw basic_error() << "SSH session creation failed (out of memory ?)";
@@ -69,6 +72,7 @@ session::~session() noexcept {
   }
 
   // Delete session.
+  //std::lock_guard<std::mutex> lock(_session_m);
   libssh2_session_set_blocking(_session, 1);
   libssh2_session_disconnect(_session, "Centreon SSH Connector shutdown");
   libssh2_session_free(_session);
@@ -78,7 +82,9 @@ session::~session() noexcept {
  *  Close session.
  */
 void session::close() {
-  system("echo 'session::close' >> /tmp/titi");
+  std::ostringstream oss;
+  oss << "echo '" << std::this_thread::get_id() << ": session::close' >> /tmp/titi";
+  system(oss.str().c_str());
   // Unregister with multiplexer.
   multiplexer::instance().handle_manager::remove(&_socket);
   multiplexer::instance().handle_manager::remove(this);
@@ -100,7 +106,9 @@ void session::close() {
  *  Open session.
  */
 void session::connect(bool use_ipv6) {
-  system("echo 'session::connect' >> /tmp/titi");
+  std::ostringstream oss;
+  oss << "echo '" << std::this_thread::get_id() << ": session::connect' >> /tmp/titi";
+  system(oss.str().c_str());
   // Check that session wasn't already open.
   if (is_connected()) {
     log_info(logging::high) << "attempt to open already opened session";
@@ -229,7 +237,9 @@ void session::connect(bool use_ipv6) {
  *  another channel is requested).
  */
 void session::error() {
-  system("echo 'session::error' >> /tmp/titi");
+  std::ostringstream oss;
+  oss << "echo '" << std::this_thread::get_id() << ": session::error' >> /tmp/titi";
+  system(oss.str().c_str());
   _step = session_error;
   _step_string = "error";
 }
@@ -240,7 +250,9 @@ void session::error() {
  *  @param[in,out] h Handle.
  */
 void session::error(handle& h) {
-  system("echo 'session::error2' >> /tmp/titi");
+  std::ostringstream oss;
+  oss << "echo '" << std::this_thread::get_id() << ": session::error2' >> /tmp/titi";
+  system(oss.str().c_str());
   (void)h;
   log_error(logging::low) << "error detected on socket, shutting down session "
                           << _creds.get_user() << "@" << _creds.get_host()
@@ -254,7 +266,9 @@ void session::error(handle& h) {
  *  @return Credentials associated to this session.
  */
 credentials const& session::get_credentials() const noexcept {
-  system("echo 'session::get_credentials' >> /tmp/titi");
+  std::ostringstream oss;
+  oss << "echo '" << std::this_thread::get_id() << ": session::get_credentials' >> /tmp/titi";
+  system(oss.str().c_str());
   return _creds;
 }
 
@@ -264,6 +278,7 @@ credentials const& session::get_credentials() const noexcept {
  *  @return libssh2 session object.
  */
 LIBSSH2_SESSION* session::get_libssh2_session() const noexcept {
+  //std::lock_guard<std::mutex> lock(_session_m);
   return _session;
 }
 
@@ -330,7 +345,11 @@ LIBSSH2_CHANNEL* session::new_channel() {
  *  @param[in] h Handle.
  */
 void session::read(handle& h) {
-  system("echo 'session::read 1' >> /tmp/titi");
+  std::lock_guard<std::mutex> lock(_session_m);
+
+  std::ostringstream oss;
+  oss << "echo '" << std::this_thread::get_id() << ": session::read 1' >> /tmp/titi";
+  system(oss.str().c_str());
   (void)h;
   static void (session::*const redirector[])() = {
       &session::_startup, &session::_passwd, &session::_key,
@@ -338,16 +357,24 @@ void session::read(handle& h) {
 
   switch (_step)  {
     case 0:
-      system("echo 'session::read _startup' >> /tmp/titi");
+      oss.str("");
+      oss << "echo '" << std::this_thread::get_id() << ": session::read _startup' >> /tmp/titi";
+      system(oss.str().c_str());
       break;
     case 1:
-      system("echo 'session::read _passwd' >> /tmp/titi");
+      oss.str("");
+      oss << "echo '" << std::this_thread::get_id() << ": session::read _passwd' >> /tmp/titi";
+      system(oss.str().c_str());
       break;
     case 2:
-      system("echo 'session::read _key' >> /tmp/titi");
+      oss.str("");
+      oss << "echo '" << std::this_thread::get_id() << ": session::read _key' >> /tmp/titi";
+      system(oss.str().c_str());
       break;
     case 3:
-      system("echo 'session::read _available' >> /tmp/titi");
+      oss.str("");
+      oss << "echo '" << std::this_thread::get_id() << ": session::read _available' >> /tmp/titi";
+      system(oss.str().c_str());
       break;
     default:
       break;
@@ -388,13 +415,28 @@ void session::unlisten(listener* listnr) {
  */
 bool session::want_read(handle& h) {
   (void)h;
-  system("echo 'session::want_read' >> /tmp/titi");
+  std::lock_guard<std::mutex> lock(_session_m);
+  std::ostringstream oss;
+  oss << "echo '" << std::this_thread::get_id()
+      << ": session::want_read' >> /tmp/titi";
+  system(oss.str().c_str());
   bool retval(_session && (libssh2_session_block_directions(_session) &
                            LIBSSH2_SESSION_BLOCK_INBOUND));
   log_debug(logging::low) << "session " << _creds.get_user() << "@"
                           << _creds.get_host() << ":" << _creds.get_port()
                           << (retval ? "" : " do not") << " want to read (step "
                           << _step_string << ")";
+  if (retval) {
+    oss.str("");
+    oss << "echo '" << std::this_thread::get_id()
+        << ": session::want_read => YES' >> /tmp/titi";
+    system(oss.str().c_str());
+  } else {
+    oss.str("");
+    oss << "echo '" << std::this_thread::get_id()
+        << ": session::want_read => NO' >> /tmp/titi";
+    system(oss.str().c_str());
+  }
   return retval;
 }
 
@@ -404,8 +446,11 @@ bool session::want_read(handle& h) {
  *  @return true if write monitoring is wanted.
  */
 bool session::want_write(handle& h) {
-  system("echo 'session::want_write' >> /tmp/titi");
   (void)h;
+  std::ostringstream oss;
+  oss << "echo '" << std::this_thread::get_id()
+      << ": session::want_write' >> /tmp/titi";
+  system(oss.str().c_str());
   bool retval(_session && ((libssh2_session_block_directions(_session) &
                             LIBSSH2_SESSION_BLOCK_OUTBOUND) ||
                            _needed_new_chan));
@@ -413,6 +458,17 @@ bool session::want_write(handle& h) {
                           << _creds.get_host() << ":" << _creds.get_port()
                           << (retval ? "" : " do not")
                           << " want to write (step " << _step_string << ")";
+  if (retval) {
+    oss.str("");
+    oss << "echo '" << std::this_thread::get_id()
+        << ": session::want_write => YES' >> /tmp/titi";
+    system(oss.str().c_str());
+  } else {
+    oss.str("");
+    oss << "echo '" << std::this_thread::get_id()
+        << ": session::want_write => NO' >> /tmp/titi";
+    system(oss.str().c_str());
+  }
   return retval;
 }
 
@@ -422,10 +478,16 @@ bool session::want_write(handle& h) {
  *  @param[in] h Handle.
  */
 void session::write(handle& h) {
-  system("echo 'session::write 1' >> /tmp/titi");
+  std::ostringstream oss;
+  oss << "echo '" << std::this_thread::get_id()
+      << ": session::write 1' >> /tmp/titi";
+  system(oss.str().c_str());
   _needed_new_chan = false;
   read(h);
-  system("echo 'session::write 2' >> /tmp/titi");
+  oss.str("");
+  oss << "echo '" << std::this_thread::get_id()
+      << ": session::write 2' >> /tmp/titi";
+  system(oss.str().c_str());
 }
 
 /**************************************
@@ -438,7 +500,10 @@ void session::write(handle& h) {
  *  Session is available for operation.
  */
 void session::_available() {
-  system("echo 'session::available' >> /tmp/titi");
+  std::ostringstream oss;
+  oss << "echo '" << std::this_thread::get_id()
+      << ": session::available' >> /tmp/titi";
+  system(oss.str().c_str());
   log_debug(logging::high) << "session " << this << " is available and has "
                            << _listnrs.size() << " listeners";
   _listnrs_it = _listnrs.begin();
@@ -452,7 +517,10 @@ void session::_available() {
  *  Attempt public key authentication.
  */
 void session::_key() {
-  system("echo 'session::key' >> /tmp/titi");
+  std::ostringstream oss;
+  oss << "echo '" << std::this_thread::get_id()
+      << ": session::key' >> /tmp/titi";
+  system(oss.str().c_str());
   // Log message.
   log_info(logging::medium)
       << "launching key-based authentication on session " << _creds.get_user()
@@ -483,6 +551,14 @@ void session::_key() {
       _session, _creds.get_user().c_str(), pub.c_str(), priv.c_str(),
       _creds.get_password().c_str()));
   if (retval < 0) {
+    system("echo 'session::key failed' >> /tmp/titi");
+    std::ostringstream oss;
+    char*msg;
+    libssh2_session_last_error(_session, &msg, nullptr, 0);
+    oss << "echo 'session::key error message: "
+      << msg << "' >> /tmp/titi";
+    system(oss.str().c_str());
+
     if (retval != LIBSSH2_ERROR_EAGAIN)
       throw basic_error() << "user authentication failed";
   } else {
@@ -512,60 +588,119 @@ void session::_key() {
  *  Try password authentication.
  */
 void session::_passwd() {
-  system("echo 'session::passwd' >> /tmp/titi");
+  std::ostringstream oss;
+  oss << "echo '" << std::this_thread::get_id()
+      << ": session::passwd' >> /tmp/titi";
+  system(oss.str().c_str());
   // Log message.
   log_info(logging::medium)
       << "launching password-based authentication on session "
       << _creds.get_user() << "@" << _creds.get_host() << ":"
       << _creds.get_port();
 
-  // Try password.
-  int retval(libssh2_userauth_password(_session, _creds.get_user().c_str(),
-                                       _creds.get_password().c_str()));
-  if (retval != 0) {
+  oss.str("");
+  oss << "echo '" << std::this_thread::get_id()
+      << ": session::passwd ERROR NOT MANAGED' >> /tmp/titi";
+  system(oss.str().c_str());
+        char* msg;
+        libssh2_session_last_error(_session, &msg, nullptr, 0);
+        oss.str("");
+        oss << "echo 'session::passwd trying user: " << _creds.get_user()
+          << " ; password: " << _creds.get_password() <<
+          "' >> /tmp/titi";
+        system(oss.str().c_str());
+
+  bool restart = false;
+  do {
+    // Try password.
+    int retval(libssh2_userauth_password(_session, _creds.get_user().c_str(),
+                                         _creds.get_password().c_str()));
+    if (retval != 0) {
 #if LIBSSH2_VERSION_NUM >= 0x010203
-    if (retval == LIBSSH2_ERROR_AUTHENTICATION_FAILED) {
+  oss.str("");
+  oss << "echo '" << std::this_thread::get_id()
+      << ": session::passwd result1 != 0' >> /tmp/titi";
+  system(oss.str().c_str());
+      if (retval == LIBSSH2_ERROR_AUTHENTICATION_FAILED) {
 #else
-    if ((retval != LIBSSH2_ERROR_EAGAIN) && (retval != LIBSSH2_ERROR_ALLOC) &&
-        (retval != LIBSSH2_ERROR_SOCKET_SEND)) {
+      if (retval != LIBSSH2_ERROR_EAGAIN && retval != LIBSSH2_ERROR_ALLOC &&
+          retval != LIBSSH2_ERROR_SOCKET_SEND) {
+  oss.str("");
+  oss << "echo '" << std::this_thread::get_id()
+      << ": session::passwd result2 != 0' >> /tmp/titi";
+  system(oss.str().c_str());
 #endif /* libssh2 version >= 1.2.3 */
+        log_info(logging::medium)
+            << "could not authenticate with password on session "
+            << _creds.get_user() << "@" << _creds.get_host() << ":"
+            << _creds.get_port();
+        _step = session_key;
+        _step_string = "public key authentication";
+
+        std::ostringstream oss;
+        char* msg;
+        libssh2_session_last_error(_session, &msg, nullptr, 0);
+        oss << "echo 'session::passwd failed: " << msg << "' >> /tmp/titi";
+        system(oss.str().c_str());
+
+        _key();
+        restart = false;
+      } else if (retval != LIBSSH2_ERROR_EAGAIN) {
+  oss.str("");
+  oss << "echo '" << std::this_thread::get_id()
+      << ": session::passwd ERROR AGAIN' >> /tmp/titi";
+  system(oss.str().c_str());
+        char* msg;
+        libssh2_session_last_error(_session, &msg, nullptr, 0);
+        throw basic_error() << "password authentication failed: " << msg
+                            << " (error " << retval << ")";
+      } else {
+  oss.str("");
+  oss << "echo '" << std::this_thread::get_id()
+      << ": session::passwd ERROR NOT MANAGED' >> /tmp/titi";
+  system(oss.str().c_str());
+        std::ostringstream oss;
+        char* msg;
+        libssh2_session_last_error(_session, &msg, nullptr, 0);
+        oss << "echo 'session::passwd error message: " << msg
+            << "' >> /tmp/titi";
+        system(oss.str().c_str());
+        restart = true;
+      }
+    } else {
+      // Log message.
       log_info(logging::medium)
-          << "could not authenticate with password on session "
+          << "successful password authentication on session "
           << _creds.get_user() << "@" << _creds.get_host() << ":"
           << _creds.get_port();
-      _step = session_key;
-      _step_string = "public key authentication";
-      _key();
-    } else if (retval != LIBSSH2_ERROR_EAGAIN) {
-      char* msg;
-      libssh2_session_last_error(_session, &msg, nullptr, 0);
-      throw basic_error() << "password authentication failed: " << msg
-                          << " (error " << retval << ")";
-    }
-  } else {
-    // Log message.
-    log_info(logging::medium)
-        << "successful password authentication on session " << _creds.get_user()
-        << "@" << _creds.get_host() << ":" << _creds.get_port();
 
-    // We're now connected.
-    _step = session_keepalive;
-    _step_string = "keep-alive";
-    {
-      _listnrs_it = _listnrs.begin();
-      while (_listnrs_it != _listnrs.end()) {
-        std::set<listener*>::iterator it(_listnrs_it++);
-        (*it)->on_connected(*this);
+  oss.str("");
+  oss << "echo '" << std::this_thread::get_id()
+      << ": session::passwd CONNECTION OK' >> /tmp/titi";
+  system(oss.str().c_str());
+      // We're now connected.
+      _step = session_keepalive;
+      _step_string = "keep-alive";
+      {
+        _listnrs_it = _listnrs.begin();
+        while (_listnrs_it != _listnrs.end()) {
+          std::set<listener*>::iterator it(_listnrs_it++);
+          (*it)->on_connected(*this);
+        }
       }
+      restart = false;
     }
-  }
+  } while (restart);
 }
 
 /**
  *  Perform SSH connection startup.
  */
 void session::_startup() {
-  system("echo 'session::startup' >> /tmp/titi");
+  std::ostringstream oss;
+  oss << "echo '" << std::this_thread::get_id()
+      << ": session::startup' >> /tmp/titi";
+  system(oss.str().c_str());
   // Log message.
   log_info(logging::high) << "attempting to initialize SSH session "
                           << _creds.get_user() << "@" << _creds.get_host()
@@ -576,7 +711,10 @@ void session::_startup() {
 
   // Exchange banners, keys, setup crypto, compression, ...
 #if LIBSSH2_VERSION_NUM >= 0x010208
-  system("echo 'session::startup1' >> /tmp/titi");
+  oss.str("");
+  oss << "echo '" << std::this_thread::get_id()
+      << ": session::startup1' >> /tmp/titi";
+  system(oss.str().c_str());
   // libssh2_session_startup deprecated in version 1.2.8 and later
   int retval(libssh2_session_handshake(_session, _socket.get_native_handle()));
 #else
