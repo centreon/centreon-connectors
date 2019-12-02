@@ -16,20 +16,20 @@
 ** For more information : contact@centreon.com
 */
 
+#include "com/centreon/connector/perl/orders/parser.hh"
 #include <cstdlib>
 #include <cstring>
 #include <string>
-#include "com/centreon/connector/perl/orders/parser.hh"
 #include "com/centreon/exceptions/basic.hh"
 #include "com/centreon/logging/logger.hh"
 
 using namespace com::centreon::connector::perl::orders;
 
 /**************************************
-*                                     *
-*           Public Methods            *
-*                                     *
-**************************************/
+ *                                     *
+ *           Public Methods            *
+ *                                     *
+ **************************************/
 
 /**
  *  Default constructor.
@@ -48,7 +48,7 @@ parser::parser(parser const& p) : handle_listener(p) {
 /**
  *  Destructor.
  */
-parser::~parser() throw () {}
+parser::~parser() throw() {}
 
 /**
  *  Assignment operator.
@@ -74,7 +74,7 @@ void parser::error(handle& h) {
   (void)h;
   if (_listnr)
     _listnr->on_error();
-  return ;
+  return;
 }
 
 /**
@@ -82,7 +82,7 @@ void parser::error(handle& h) {
  *
  *  @return Unparsed buffer.
  */
-std::string const& parser::get_buffer() const throw () {
+std::string const& parser::get_buffer() const throw() {
   return (_buffer);
 }
 
@@ -91,7 +91,7 @@ std::string const& parser::get_buffer() const throw () {
  *
  *  @return Listener if object has one, NULL otherwise.
  */
-listener* parser::get_listener() const throw () {
+listener* parser::get_listener() const throw() {
   return (_listnr);
 }
 
@@ -100,9 +100,9 @@ listener* parser::get_listener() const throw () {
  *
  *  @param[in] l Listener.
  */
-void parser::listen(listener* l) throw () {
+void parser::listen(listener* l) throw() {
   _listnr = l;
-  return ;
+  return;
 }
 
 /**
@@ -115,8 +115,7 @@ void parser::read(handle& h) {
   log_debug(logging::medium) << "reading data for parsing";
   char buffer[4096];
   unsigned long rb(h.read(buffer, sizeof(buffer)));
-  log_debug(logging::medium) << "read "
-    << rb << " bytes from handle";
+  log_debug(logging::medium) << "read " << rb << " bytes from handle";
 
   // stdin's eof is reached.
   if (!rb) {
@@ -135,21 +134,17 @@ void parser::read(handle& h) {
 
     // Parse command.
     while (bound != std::string::npos) {
-      log_debug(logging::high)
-        << "got command boundary at offset " << bound;
+      log_debug(logging::high) << "got command boundary at offset " << bound;
       bound += sizeof(boundary);
       std::string cmd(_buffer.substr(0, bound));
       _buffer.erase(0, bound);
       bool error(false);
       try {
         _parse(cmd);
-      }
-      catch (std::exception const& e) {
-        log_error(logging::low) << "orders parsing error: "
-          << e.what();
+      } catch (std::exception const& e) {
+        log_error(logging::low) << "orders parsing error: " << e.what();
         error = true;
-      }
-      catch (...) {
+      } catch (...) {
         log_error(logging::low) << "unknown orders parsing error";
         error = true;
       }
@@ -158,7 +153,7 @@ void parser::read(handle& h) {
       bound = _buffer.find(boundary, 0, sizeof(boundary));
     }
   }
-  return ;
+  return;
 }
 
 /**
@@ -182,10 +177,10 @@ bool parser::want_write(handle& h) {
 }
 
 /**************************************
-*                                     *
-*           Private Methods           *
-*                                     *
-**************************************/
+ *                                     *
+ *           Private Methods           *
+ *                                     *
+ **************************************/
 
 /**
  *  Copy internal data members.
@@ -195,7 +190,7 @@ bool parser::want_write(handle& h) {
 void parser::_copy(parser const& p) {
   _buffer = p._buffer;
   _listnr = p._listnr;
-  return ;
+  return;
 }
 
 /**
@@ -214,11 +209,11 @@ void parser::_parse(std::string const& cmd) {
 
   // Process each command as necessary.
   switch (id) {
-  case 0: // Version query.
-    if (_listnr)
-      _listnr->on_version();
-    break ;
-  case 2: // Execute query.
+    case 0:  // Version query.
+      if (_listnr)
+        _listnr->on_version();
+      break;
+    case 2:  // Execute query.
     {
       // Note: no need to check npos because cmd is
       //       terminated with at least 4 \0.
@@ -228,26 +223,27 @@ void parser::_parse(std::string const& cmd) {
       char* ptr(NULL);
       unsigned long long cmd_id(strtoull(cmd.c_str() + pos, &ptr, 10));
       if (!cmd_id || *ptr)
-        throw (basic_error() << "invalid execution request received:" \
-                    " bad command ID (" << cmd.c_str() + pos << ")");
+        throw(basic_error() << "invalid execution request received:"
+                               " bad command ID ("
+                            << cmd.c_str() + pos << ")");
       pos = end + 1;
       // Find timeout value.
       end = cmd.find('\0', pos);
-      time_t timeout(static_cast<time_t>(strtoull(
-        cmd.c_str() + pos,
-        &ptr,
-        10)));
+      time_t timeout(
+          static_cast<time_t>(strtoull(cmd.c_str() + pos, &ptr, 10)));
       if (*ptr)
-        throw (basic_error() << "invalid execution request received:" \
-                    " bad timeout (" << cmd.c_str() + pos << ")");
+        throw(basic_error() << "invalid execution request received:"
+                               " bad timeout ("
+                            << cmd.c_str() + pos << ")");
       timeout += time(NULL);
       pos = end + 1;
       // Find start time.
       end = cmd.find('\0', pos);
       strtoull(cmd.c_str() + pos, &ptr, 10);
       if (*ptr)
-        throw (basic_error() << "invalid execution request received:" \
-                    " bad start time (" << cmd.c_str() + pos << ")");
+        throw(basic_error() << "invalid execution request received:"
+                               " bad start time ("
+                            << cmd.c_str() + pos << ")");
       pos = end + 1;
       // Find command to execute.
       end = cmd.find('\0', pos);
@@ -255,19 +251,14 @@ void parser::_parse(std::string const& cmd) {
 
       // Notify listener.
       if (_listnr)
-        _listnr->on_execute(
-          cmd_id,
-          timeout,
-          cmdline);
-    }
-    break ;
-  case 4: // Quit query.
-    if (_listnr)
-      _listnr->on_quit();
-    break ;
-  default:
-    throw (basic_error() << "invalid command received (ID "
-             << id << ")");
+        _listnr->on_execute(cmd_id, timeout, cmdline);
+    } break;
+    case 4:  // Quit query.
+      if (_listnr)
+        _listnr->on_quit();
+      break;
+    default:
+      throw(basic_error() << "invalid command received (ID " << id << ")");
   };
-  return ;
+  return;
 }

@@ -38,8 +38,7 @@ using namespace com::centreon::connector::ssh::sessions;
  *
  *  @param[in] handl Native socket descriptor.
  */
-socket_handle::socket_handle(native_handle handl) : _handl(handl) {
-}
+socket_handle::socket_handle(native_handle handl) : _handl(handl) {}
 
 /**
  *  Destructor.

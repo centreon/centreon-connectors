@@ -60,8 +60,8 @@ int main() {
     it = listnr.get_callbacks().begin();
     info1 = *(it++);
     info2 = *(it++);
-    retval |= ((info1.callback != fake_listener::cb_error)
-               || (info2.callback != fake_listener::cb_eof));
+    retval |= ((info1.callback != fake_listener::cb_error) ||
+               (info2.callback != fake_listener::cb_eof));
   }
 
   // Parser must be empty.

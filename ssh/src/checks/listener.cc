@@ -21,10 +21,10 @@
 using namespace com::centreon::connector::ssh::checks;
 
 /**************************************
-*                                     *
-*           Public Methods            *
-*                                     *
-**************************************/
+ *                                     *
+ *           Public Methods            *
+ *                                     *
+ **************************************/
 
 /**
  *  Default constructor.

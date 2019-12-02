@@ -17,10 +17,10 @@
 */
 
 #ifndef CCCP_OPTIONS_HH
-#  define CCCP_OPTIONS_HH
+#define CCCP_OPTIONS_HH
 
-#  include "com/centreon/connector/perl/namespace.hh"
-#  include "com/centreon/misc/get_options.hh"
+#include "com/centreon/connector/perl/namespace.hh"
+#include "com/centreon/misc/get_options.hh"
 
 CCCP_BEGIN()
 
@@ -30,20 +30,20 @@ CCCP_BEGIN()
  *
  *  Parse and expose command line arguments.
  */
-class         options : public com::centreon::misc::get_options {
-public:
-              options();
-              options(options const& opts);
-              ~options() throw ();
-  options&    operator=(options const& opts);
+class options : public com::centreon::misc::get_options {
+ public:
+  options();
+  options(options const& opts);
+  ~options() throw();
+  options& operator=(options const& opts);
   std::string help() const;
-  void        parse(int argc, char* argv[]);
+  void parse(int argc, char* argv[]);
   std::string usage() const;
 
-private:
-  void        _init();
+ private:
+  void _init();
 };
 
 CCCP_END()
 
-#endif // !CCCP_OPTIONS_HH
+#endif  // !CCCP_OPTIONS_HH

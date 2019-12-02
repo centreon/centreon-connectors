@@ -63,9 +63,9 @@ int main() {
     info1 = *(it++);
     info2 = *(it++);
     info3 = *(it++);
-    retval |= ((info1.callback != fake_listener::cb_error)
-               || (info2.callback != fake_listener::cb_error)
-               || (info3.callback != fake_listener::cb_eof));
+    retval |= ((info1.callback != fake_listener::cb_error) ||
+               (info2.callback != fake_listener::cb_error) ||
+               (info3.callback != fake_listener::cb_eof));
   }
 
   // Parser must be empty.

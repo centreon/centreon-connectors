@@ -67,7 +67,8 @@ policy::~policy() noexcept {
   for (auto& c : _checks) {
     try {
       c.second.first->unlisten(this);
-    } catch (...) {}
+    } catch (...) {
+    }
     delete c.second.first;
   }
   _checks.clear();
@@ -216,8 +217,8 @@ void policy::on_result(checks::result const& r) {
   std::lock_guard<std::mutex> lock(_mutex);
 
   // Remove check from list.
-  std::map<uint64_t,
-           std::pair<checks::check*, sessions::session*> >::iterator chk;
+  std::map<uint64_t, std::pair<checks::check*, sessions::session*> >::iterator
+      chk;
   chk = _checks.find(r.get_command_id());
   if (chk == _checks.end())
     log_error(logging::medium) << "got result of check " << r.get_command_id()

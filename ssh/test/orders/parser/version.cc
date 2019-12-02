@@ -56,8 +56,8 @@ int main() {
     fake_listener::callback_info info1, info2;
     info1 = *listnr.get_callbacks().begin();
     info2 = *++listnr.get_callbacks().begin();
-    retval |= ((info1.callback != fake_listener::cb_version)
-               || (info2.callback != fake_listener::cb_eof));
+    retval |= ((info1.callback != fake_listener::cb_version) ||
+               (info2.callback != fake_listener::cb_eof));
   }
 
   // Parser must be empty.

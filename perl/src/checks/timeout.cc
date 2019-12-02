@@ -16,16 +16,16 @@
 ** For more information : contact@centreon.com
 */
 
-#include "com/centreon/connector/perl/checks/check.hh"
 #include "com/centreon/connector/perl/checks/timeout.hh"
+#include "com/centreon/connector/perl/checks/check.hh"
 
 using namespace com::centreon::connector::perl::checks;
 
 /**************************************
-*                                     *
-*           Public Methods            *
-*                                     *
-**************************************/
+ *                                     *
+ *           Public Methods            *
+ *                                     *
+ **************************************/
 
 /**
  *  Constructor.
@@ -47,7 +47,7 @@ timeout::timeout(timeout const& t) : com::centreon::task(t) {
 /**
  *  Destructor.
  */
-timeout::~timeout() throw () {}
+timeout::~timeout() throw() {}
 
 /**
  *  Assignment operator.
@@ -69,7 +69,7 @@ timeout& timeout::operator=(timeout const& t) {
  *
  *  @return Check object.
  */
-check* timeout::get_check() const throw () {
+check* timeout::get_check() const throw() {
   return (_check);
 }
 
@@ -78,7 +78,7 @@ check* timeout::get_check() const throw () {
  *
  *  @return true if the timeout is final.
  */
-bool timeout::is_final() const throw () {
+bool timeout::is_final() const throw() {
   return (_final);
 }
 
@@ -88,7 +88,7 @@ bool timeout::is_final() const throw () {
 void timeout::run() {
   if (_check)
     _check->on_timeout(_final);
-  return ;
+  return;
 }
 
 /**
@@ -96,9 +96,9 @@ void timeout::run() {
  *
  *  @param[in] chk Target check.
  */
-void timeout::set_check(check* chk) throw () {
+void timeout::set_check(check* chk) throw() {
   _check = chk;
-  return ;
+  return;
 }
 
 /**
@@ -106,16 +106,16 @@ void timeout::set_check(check* chk) throw () {
  *
  *  @param[in] final New final parameter.
  */
-void timeout::set_final(bool final) throw () {
+void timeout::set_final(bool final) throw() {
   _final = final;
-  return ;
+  return;
 }
 
 /**************************************
-*                                     *
-*           Private Methods           *
-*                                     *
-**************************************/
+ *                                     *
+ *           Private Methods           *
+ *                                     *
+ **************************************/
 
 /**
  *  Copy internal data members.
@@ -125,5 +125,5 @@ void timeout::set_final(bool final) throw () {
 void timeout::_internal_copy(timeout const& t) {
   _check = t._check;
   _final = t._final;
-  return ;
+  return;
 }

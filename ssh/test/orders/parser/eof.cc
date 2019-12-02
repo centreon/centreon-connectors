@@ -50,8 +50,8 @@ int main() {
   if (listnr.get_callbacks().size() != 1)
     retval = 1;
   else
-    retval |= (listnr.get_callbacks().begin()->callback
-               != fake_listener::cb_eof);
+    retval |=
+        (listnr.get_callbacks().begin()->callback != fake_listener::cb_eof);
 
   // Unload.
   com::centreon::logging::engine::unload();

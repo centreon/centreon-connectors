@@ -51,8 +51,7 @@ int main() {
     try {
       r.error(bh);
       retval = 1;
-    }
-    catch (com::centreon::exceptions::basic const& e) {
+    } catch (com::centreon::exceptions::basic const& e) {
       (void)e;
       retval = 0;
     }

@@ -73,7 +73,7 @@ int main() {
   p.enable_stream(process::in, false);
 
   // Schedule process termination.
-  std::thread killer([&p](){
+  std::thread killer([&p]() {
     std::this_thread::sleep_for(std::chrono::seconds(4));
     p.terminate();
   });

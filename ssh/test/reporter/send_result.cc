@@ -24,7 +24,9 @@
 
 using namespace com::centreon::connector::ssh;
 
-#define EXPECTED "3\00042\0001\0003\0some error might have occurred\0this is my output\0\0\0\0"
+#define EXPECTED                                                   \
+  "3\00042\0001\0003\0some error might have occurred\0this is my " \
+  "output\0\0\0\0"
 
 /**
  *  Check that the reporter properly reports check results.

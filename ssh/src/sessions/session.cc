@@ -54,7 +54,7 @@ session::session(credentials const& creds)
       _step(session_startup),
       _step_string("startup") {
   // Create session instance.
-  //std::lock_guard<std::mutex> lock(_session_m);
+  // std::lock_guard<std::mutex> lock(_session_m);
   _session = libssh2_session_init();
   if (!_session)
     throw basic_error() << "SSH session creation failed (out of memory ?)";
@@ -70,7 +70,7 @@ session::~session() noexcept {
   }
 
   // Delete session.
-  //std::lock_guard<std::mutex> lock(_session_m);
+  // std::lock_guard<std::mutex> lock(_session_m);
   libssh2_session_set_blocking(_session, 1);
   libssh2_session_disconnect(_session, "Centreon SSH Connector shutdown");
   libssh2_session_free(_session);
@@ -261,7 +261,7 @@ credentials const& session::get_credentials() const noexcept {
  *  @return libssh2 session object.
  */
 LIBSSH2_SESSION* session::get_libssh2_session() const noexcept {
-  //std::lock_guard<std::mutex> lock(_session_m);
+  // std::lock_guard<std::mutex> lock(_session_m);
   return _session;
 }
 
@@ -334,7 +334,7 @@ void session::read(handle& h) {
       &session::_startup, &session::_passwd, &session::_key,
       &session::_available};
 
-  switch (_step)  {
+  switch (_step) {
     case 0:
       break;
     case 1:

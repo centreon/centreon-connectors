@@ -65,8 +65,7 @@ int main() {
   if (!p.wait(5000)) {
     p.terminate();
     p.wait();
-  }
-  else {
+  } else {
     int exit_code(p.exit_code());
     retval = (exit_code == 0);
     std::cout << "exit code: " << exit_code << std::endl;

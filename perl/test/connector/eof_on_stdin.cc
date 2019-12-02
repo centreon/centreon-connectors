@@ -40,8 +40,7 @@ int main() {
   if (!p.wait(5000)) {
     p.terminate();
     p.wait();
-  }
-  else
+  } else
     retval = (p.exit_code() != 0);
   clib::unload();
   return (retval);

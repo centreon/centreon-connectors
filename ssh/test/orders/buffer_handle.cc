@@ -16,8 +16,8 @@
 ** For more information : contact@centreon.com
 */
 
-#include <cstring>
 #include "test/orders/buffer_handle.hh"
+#include <cstring>
 
 using namespace com::centreon;
 
@@ -38,7 +38,7 @@ buffer_handle::buffer_handle(buffer_handle const& bh) : handle(bh) {
 /**
  *  Destructor.
  */
-buffer_handle::~buffer_handle() throw () {}
+buffer_handle::~buffer_handle() throw() {}
 
 /**
  *  Assignment operator.
@@ -60,7 +60,7 @@ buffer_handle& buffer_handle::operator=(buffer_handle const& bh) {
  */
 void buffer_handle::close() {
   _buffer.clear();
-  return ;
+  return;
 }
 
 /**
@@ -111,18 +111,16 @@ unsigned long buffer_handle::read(void* data, unsigned long size) {
  *
  *  @return size.
  */
-unsigned long buffer_handle::write(
-                               void const* data,
-                               unsigned long size) {
+unsigned long buffer_handle::write(void const* data, unsigned long size) {
   _buffer.append(static_cast<char const*>(data), size);
   return (size);
 }
 
 /**************************************
-*                                     *
-*           Private Methods           *
-*                                     *
-**************************************/
+ *                                     *
+ *           Private Methods           *
+ *                                     *
+ **************************************/
 
 /**
  *  Copy internal data members.
@@ -131,5 +129,5 @@ unsigned long buffer_handle::write(
  */
 void buffer_handle::_copy(buffer_handle const& bh) {
   _buffer = bh._buffer;
-  return ;
+  return;
 }
