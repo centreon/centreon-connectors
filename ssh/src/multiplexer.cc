@@ -21,9 +21,6 @@
 
 using namespace com::centreon::connector::ssh;
 
-// Class instance pointer.
-static multiplexer* _instance = nullptr;
-
 /**************************************
  *                                     *
  *           Public Methods            *
@@ -31,31 +28,13 @@ static multiplexer* _instance = nullptr;
  **************************************/
 
 /**
- *  Destructor.
- */
-multiplexer::~multiplexer() noexcept {}
-
-/**
  *  Get class instance.
  *
  *  @return multiplexer instance.
  */
-multiplexer& multiplexer::instance() noexcept { return *_instance; }
-
-/**
- *  Load singleton.
- */
-void multiplexer::load() {
-  if (!_instance)
-    _instance = new multiplexer;
-}
-
-/**
- *  Unload singleton.
- */
-void multiplexer::unload() {
-  delete _instance;
-  _instance = nullptr;
+multiplexer& multiplexer::instance() noexcept {
+  static multiplexer instance;
+  return instance;
 }
 
 /**************************************

@@ -16,6 +16,7 @@
 ** For more information : contact@centreon.com
 */
 
+#include <atomic>
 #include <sstream>
 #include "com/centreon/connector/ssh/policy.hh"
 #include <cstdio>
@@ -31,7 +32,7 @@
 using namespace com::centreon::connector::ssh;
 
 // Exit flag.
-extern volatile bool should_exit;
+extern std::atomic<bool> should_exit;
 
 /**************************************
  *                                     *

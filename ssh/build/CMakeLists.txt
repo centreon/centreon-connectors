@@ -507,13 +507,6 @@ if (WITH_TESTING)
   #
   # Root namespace tests.
   #
-  # multiplexer tests.
-  #   Check singleton.
-  set(TEST_NAME "multiplexer_singleton")
-  add_executable("${TEST_NAME}"
-    "${TEST_DIR}/multiplexer/singleton.cc")
-  target_link_libraries("${TEST_NAME}" "${CONNECTORLIB}")
-  add_test("${TEST_NAME}" "${TEST_NAME}")
   # reporter tests.
   #   Default constructor.
   set(TEST_NAME "reporter_ctor_default")

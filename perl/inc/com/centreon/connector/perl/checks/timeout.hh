@@ -38,9 +38,8 @@ class check;
 class timeout : public com::centreon::task {
  public:
   timeout(check* chk = NULL, bool final = false);
-  timeout(timeout const& t);
-  ~timeout() throw();
-  timeout& operator=(timeout const& t);
+  timeout(timeout const& t) = delete;
+  timeout& operator=(timeout const& t) = delete;
   check* get_check() const throw();
   bool is_final() const throw();
   void run();

@@ -20,12 +20,12 @@
 #include <csignal>
 #include <cstdio>
 #include <cstdlib>
+#include <atomic>
 #ifdef LIBSSH2_WITH_LIBGCRYPT
 #include <gcrypt.h>
 #endif  // LIBSSH2_WITH_LIBGCRYPT
 #include <libssh2.h>
 #include <iostream>
-#include "com/centreon/connector/ssh/multiplexer.hh"
 #include "com/centreon/connector/ssh/options.hh"
 #include "com/centreon/connector/ssh/policy.hh"
 #include "com/centreon/exceptions/basic.hh"
@@ -41,7 +41,7 @@ using namespace com::centreon::connector::ssh;
 #endif  // !CENTREON_CONNECTOR_SSH_VERSION
 
 // Termination flag.
-volatile bool should_exit(false);
+std::atomic<bool> should_exit(false);
 
 #ifdef LIBSSH2_WITH_LIBGCRYPT
 // libgcrypt threading structure.
@@ -79,9 +79,6 @@ int main(int argc, char* argv[]) {
   logging::file* log_file = NULL;
 
   try {
-    // Initializations.
-    multiplexer::load();
-
     // Command line parsing.
     options opts;
     try {
@@ -89,7 +86,7 @@ int main(int argc, char* argv[]) {
     }
     catch (exceptions::basic const& e) {
       std::cout << e.what() << std::endl << opts.usage() << std::endl;
-      return (EXIT_FAILURE);
+      return EXIT_FAILURE;
     }
     if (opts.get_argument("help").get_is_set()) {
       std::cout << opts.help() << std::endl;
@@ -129,16 +126,16 @@ int main(int argc, char* argv[]) {
       // Version check should be the very first call because it
       // makes sure that important subsystems are initialized.
       if (!gcry_check_version(GCRYPT_VERSION))
-        throw(basic_error() << "libgcrypt version mismatch: ");
+        throw basic_error() << "libgcrypt version mismatch: ";
       gcry_control(GCRYCTL_SET_THREAD_CBS, &gcry_threads_pthread);
 #endif  // LIBSSH2_WITH_LIBGCRYPT
       if (libssh2_init(0))
-        throw(basic_error() << "libssh2 initialization failed");
+        throw basic_error() << "libssh2 initialization failed";
       {
         char const* version(libssh2_version(LIBSSH2_VERSION_NUM));
         if (!version)
-          throw(basic_error() << "libssh2 version is too old (>= "
-                              << LIBSSH2_VERSION << " required)");
+          throw basic_error() << "libssh2 version is too old (>= "
+                              << LIBSSH2_VERSION << " required)";
         log_info(logging::low) << "libssh2 version " << version
                                << " successfully loaded";
       }
@@ -162,10 +159,8 @@ int main(int argc, char* argv[]) {
   libssh2_exit();
 #endif /* libssh2 version >= 1.2.5 */
 
-  // Deinitializations.
-  multiplexer::unload();
   if (log_file)
     delete log_file;
 
-  return (retval);
+  return retval;
 }

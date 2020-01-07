@@ -37,14 +37,12 @@ class multiplexer : public com::centreon::task_manager,
                     public com::centreon::handle_manager {
  public:
   static multiplexer& instance() noexcept;
-  static void load();
-  static void unload();
+  ~multiplexer() = default;
+  multiplexer(multiplexer const& m) = delete;
+  multiplexer& operator=(multiplexer const& m) = delete;
 
  private:
   multiplexer();
-  ~multiplexer() noexcept;
-  multiplexer(multiplexer const& m) = delete;
-  multiplexer& operator=(multiplexer const& m) = delete;
 };
 
 CCCS_END()
