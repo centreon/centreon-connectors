@@ -26,6 +26,7 @@
 #endif  // LIBSSH2_WITH_LIBGCRYPT
 #include <libssh2.h>
 #include <iostream>
+#include "com/centreon/connector/ssh/multiplexer.hh"
 #include "com/centreon/connector/ssh/options.hh"
 #include "com/centreon/connector/ssh/policy.hh"
 #include "com/centreon/exceptions/basic.hh"
@@ -79,6 +80,9 @@ int main(int argc, char* argv[]) {
   logging::file* log_file = NULL;
 
   try {
+    // Initializations.
+    multiplexer::load();
+
     // Command line parsing.
     options opts;
     try {
@@ -159,6 +163,8 @@ int main(int argc, char* argv[]) {
   libssh2_exit();
 #endif /* libssh2 version >= 1.2.5 */
 
+  // Deinitializations.
+  multiplexer::unload();
   if (log_file)
     delete log_file;
 

@@ -52,10 +52,10 @@ class fake_listener : public com::centreon::connector::ssh::orders::listener {
     bool is_ipv6;
   };
 
-  fake_listener();
-  fake_listener(fake_listener const& fl);
-  ~fake_listener();
-  fake_listener& operator=(fake_listener const& fl);
+  fake_listener() = default;
+  ~fake_listener() = default;
+  fake_listener(fake_listener const& fl) = delete;
+  fake_listener& operator=(fake_listener const& fl) = delete;
   std::list<callback_info> const& get_callbacks() const throw();
   void on_eof();
   void on_error(uint64_t cmd_id, char const* msg);

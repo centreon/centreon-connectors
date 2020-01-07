@@ -30,21 +30,21 @@ using namespace com::centreon::connector::ssh::orders;
 /**
  *  Default constructor.
  */
-fake_listener::fake_listener() {}
+//fake_listener::fake_listener() {}
 
 /**
  *  Copy constructor.
  *
  *  @param[in] fl Object to copy.
  */
-fake_listener::fake_listener(fake_listener const& fl) : listener(fl) {
-  _copy(fl);
-}
+//fake_listener::fake_listener(fake_listener const& fl) : listener(fl) {
+//  _copy(fl);
+//}
 
 /**
  *  Destructor.
  */
-fake_listener::~fake_listener() {}
+//fake_listener::~fake_listener() {}
 
 /**
  *  Assignment operator.
@@ -53,13 +53,13 @@ fake_listener::~fake_listener() {}
  *
  *  @return This object.
  */
-fake_listener& fake_listener::operator=(fake_listener const& fl) {
-  if (this != &fl) {
-    listener::operator=(fl);
-    _copy(fl);
-  }
-  return (*this);
-}
+//fake_listener& fake_listener::operator=(fake_listener const& fl) {
+//  if (this != &fl) {
+//    listener::operator=(fl);
+//    _copy(fl);
+//  }
+//  return (*this);
+//}
 
 /**
  *  Get the callbacks information.

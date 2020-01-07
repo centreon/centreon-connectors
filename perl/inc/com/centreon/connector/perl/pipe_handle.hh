@@ -42,10 +42,8 @@ class pipe_handle : public handle {
   void close() noexcept;
   static void close_all_handles();
   native_handle get_native_handle() throw();
-  static void load();
   unsigned long read(void* data, unsigned long size);
   void set_fd(int fd);
-  static void unload();
   unsigned long write(void const* data, unsigned long size);
 };
 

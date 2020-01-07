@@ -125,13 +125,11 @@ set(CONNECTORLIB "centreonconnectorperl")
 add_library("${CONNECTORLIB}" STATIC
   # Sources.
   "${SRC_DIR}/checks/check.cc"
-  "${SRC_DIR}/checks/listener.cc"
   "${SRC_DIR}/checks/result.cc"
   "${SRC_DIR}/checks/timeout.cc"
   "${SRC_DIR}/embedded_perl.cc"
   "${SRC_DIR}/multiplexer.cc"
   "${SRC_DIR}/options.cc"
-  "${SRC_DIR}/orders/listener.cc"
   "${SRC_DIR}/orders/parser.cc"
   "${SRC_DIR}/pipe_handle.cc"
   "${SRC_DIR}/policy.cc"

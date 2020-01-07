@@ -16,6 +16,7 @@
 ** For more information : contact@centreon.com
 */
 
+#include <cassert>
 #include "com/centreon/connector/ssh/checks/check.hh"
 #include "com/centreon/connector/ssh/checks/timeout.hh"
 
@@ -29,6 +30,8 @@ using namespace com::centreon::connector::ssh;
 int main() {
   // Initialization.
   return 0;
+  //  multiplexer::load();
+  //
   //  // Base object.
   //  checks::check c1;
   //  checks::timeout t1(&c1);
@@ -43,6 +46,9 @@ int main() {
   //  // Return check result.
   //  int retval ((t1.get_check() != &c1)
   //              || (t2.get_check() != &c1));
+  //
+  //  // Unload.
+  //  multiplexer::unload();
   //
   //  return (retval);
 }

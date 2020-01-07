@@ -103,11 +103,6 @@ void pipe_handle::close_all_handles() {
 int pipe_handle::get_native_handle() noexcept { return _fd; }
 
 /**
- *  Initialize static members of the pipe_handle class.
- */
-void pipe_handle::load() {}
-
-/**
  *  Read data from the file descriptor.
  *
  *  @param[out] data Destination buffer.
@@ -137,11 +132,6 @@ void pipe_handle::set_fd(int fd) {
     gl_fds.insert(fd);
   }
 }
-
-/**
- *  Cleanup static ressources used by the pipe_handle class.
- */
-void pipe_handle::unload() {}
 
 /**
  *  Write data to the pipe.

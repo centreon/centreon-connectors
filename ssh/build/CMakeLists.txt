@@ -196,18 +196,15 @@ set(CONNECTORLIB "centreonconnectorssh")
 add_library("${CONNECTORLIB}"
   # Sources.
   "${SRC_DIR}/checks/check.cc"
-  "${SRC_DIR}/checks/listener.cc"
   "${SRC_DIR}/checks/result.cc"
   "${SRC_DIR}/checks/timeout.cc"
   "${SRC_DIR}/multiplexer.cc"
   "${SRC_DIR}/options.cc"
-  "${SRC_DIR}/orders/listener.cc"
   "${SRC_DIR}/orders/parser.cc"
   "${SRC_DIR}/orders/options.cc"
   "${SRC_DIR}/policy.cc"
   "${SRC_DIR}/reporter.cc"
   "${SRC_DIR}/sessions/credentials.cc"
-  "${SRC_DIR}/sessions/listener.cc"
   "${SRC_DIR}/sessions/session.cc"
   "${SRC_DIR}/sessions/socket_handle.cc"
   # Headers.

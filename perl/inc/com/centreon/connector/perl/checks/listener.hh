@@ -33,10 +33,10 @@ namespace checks {
  */
 class listener {
  public:
-  listener();
-  listener(listener const& l);
-  virtual ~listener();
-  listener& operator=(listener const& l);
+  listener() = default;
+  listener(listener const& l) = delete;
+  virtual ~listener() = default;
+  listener& operator=(listener const& l) = delete;
   virtual void on_result(result const& result) = 0;
 };
 }  // namespace checks

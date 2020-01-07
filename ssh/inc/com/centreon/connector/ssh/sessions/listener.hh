@@ -36,10 +36,10 @@ class session;
  */
 class listener {
  public:
-  listener();
-  listener(listener const& l);
-  virtual ~listener();
-  listener& operator=(listener const& l);
+  listener() = default;
+  virtual ~listener() = default;
+  listener(listener const& l) = delete;
+  listener& operator=(listener const& l) = delete;
   virtual void on_available(session& s) = 0;
   virtual void on_close(session& s) = 0;
   virtual void on_connected(session& s) = 0;

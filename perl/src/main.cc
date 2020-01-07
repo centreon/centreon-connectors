@@ -22,7 +22,6 @@
 #include "com/centreon/connector/perl/embedded_perl.hh"
 #include "com/centreon/connector/perl/multiplexer.hh"
 #include "com/centreon/connector/perl/options.hh"
-#include "com/centreon/connector/perl/pipe_handle.hh"
 #include "com/centreon/connector/perl/policy.hh"
 #include "com/centreon/exceptions/basic.hh"
 #include "com/centreon/logging/file.hh"
@@ -50,7 +49,6 @@ static void term_handler(int signum) {
   should_exit = true;
   signal(SIGTERM, SIG_DFL);
   errno = old_errno;
-  return;
 }
 
 /**
@@ -71,7 +69,6 @@ int main(int argc, char** argv, char** env) {
 
   try {
     // Initializations.
-    pipe_handle::load();
     multiplexer::load();
 
     // Command line parsing.
@@ -82,8 +79,7 @@ int main(int argc, char** argv, char** env) {
     catch (exceptions::basic const& e) {
       std::cout << e.what() << std::endl << opts.usage() << std::endl;
       multiplexer::unload();
-      pipe_handle::unload();
-      return (EXIT_FAILURE);
+      return EXIT_FAILURE;
     }
     if (opts.get_argument("help").get_is_set()) {
       std::cout << opts.help() << std::endl;
@@ -137,7 +133,6 @@ int main(int argc, char** argv, char** env) {
   // Deinitializations.
   embedded_perl::unload();
   multiplexer::unload();
-  pipe_handle::unload();
   if (log_file)
     delete log_file;
 

@@ -36,14 +36,13 @@ CCCP_BEGIN()
 class multiplexer : public com::centreon::task_manager,
                     public com::centreon::handle_manager {
  public:
-  ~multiplexer() throw();
-  static multiplexer& instance() throw();
   static void load();
   static void unload();
+  multiplexer(multiplexer const& m) = delete;
+  static multiplexer& instance() noexcept;
 
  private:
   multiplexer();
-  multiplexer(multiplexer const& m);
 };
 
 CCCP_END()

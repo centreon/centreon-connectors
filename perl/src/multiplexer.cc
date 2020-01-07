@@ -31,11 +31,6 @@ static multiplexer* _instance = NULL;
 **************************************/
 
 /**
- *  Destructor.
- */
-multiplexer::~multiplexer() throw() {}
-
-/**
  *  Get class instance.
  *
  *  @return multiplexer instance.

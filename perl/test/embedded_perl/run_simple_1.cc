@@ -22,7 +22,6 @@
 #include <string>
 #include <sys/wait.h>
 #include "com/centreon/connector/perl/embedded_perl.hh"
-#include "com/centreon/connector/perl/pipe_handle.hh"
 #include "com/centreon/io/file_stream.hh"
 #include "com/centreon/logging/engine.hh"
 
@@ -39,8 +38,6 @@ using namespace com::centreon::connector::perl;
  *  @return 0 on success.
  */
 int main(int argc, char* argv[], char* env[]) {
-  // Initialization.
-  pipe_handle::load();
   embedded_perl::load(&argc, &argv, &env);
 
   // Return value.
@@ -84,7 +81,6 @@ int main(int argc, char* argv[], char* env[]) {
 
   // Unload.
   embedded_perl::unload();
-  pipe_handle::unload();
 
-  return (retval);
+  return retval;
 }

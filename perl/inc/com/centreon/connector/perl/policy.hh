@@ -43,9 +43,19 @@ class result;
  *  Wraps software policy within a class.
  */
 class policy : public orders::listener, public checks::listener {
+  std::map<pid_t, checks::check*> _checks;
+  bool _error;
+  orders::parser _parser;
+  reporter _reporter;
+  io::file_stream _sin;
+  io::file_stream _sout;
+
  public:
   policy();
-  ~policy() throw();
+  ~policy() noexcept;
+  policy(policy const& p) = delete;
+  policy& operator=(policy const& p) = delete;
+
   void on_eof();
   void on_error();
   void on_execute(unsigned long long cmd_id,
@@ -56,16 +66,6 @@ class policy : public orders::listener, public checks::listener {
   void on_version();
   bool run();
 
- private:
-  policy(policy const& p);
-  policy& operator=(policy const& p);
-
-  std::map<pid_t, checks::check*> _checks;
-  bool _error;
-  orders::parser _parser;
-  reporter _reporter;
-  io::file_stream _sin;
-  io::file_stream _sout;
 };
 
 CCCP_END()

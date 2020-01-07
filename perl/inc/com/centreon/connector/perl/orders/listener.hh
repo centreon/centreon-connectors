@@ -35,10 +35,10 @@ namespace orders {
  */
 class listener {
  public:
-  listener();
-  listener(listener const& l);
-  virtual ~listener();
-  listener& operator=(listener const& l);
+  listener() = default;
+  listener(listener const& l) = delete;
+  virtual ~listener() = default;
+  listener& operator=(listener const& l) = delete;
   virtual void on_eof() = 0;
   virtual void on_error() = 0;
   virtual void on_execute(unsigned long long cmd_id,
