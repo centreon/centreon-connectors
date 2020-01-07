@@ -51,39 +51,14 @@ static std::mutex gl_fdsm;
 pipe_handle::pipe_handle(int fd) : _fd(-1) { set_fd(fd); }
 
 /**
- *  Copy constructor.
- *
- *  @param[in] ph Object to copy.
- */
-pipe_handle::pipe_handle(pipe_handle const& ph) : handle(ph) {
-  _internal_copy(ph);
-}
-
-/**
  *  Destructor.
  */
-pipe_handle::~pipe_handle() throw() { close(); }
-
-/**
- *  Assignment operator.
- *
- *  @param[in] ph Object to copy.
- *
- *  @return This object.
- */
-pipe_handle& pipe_handle::operator=(pipe_handle const& ph) {
-  if (this != &ph) {
-    handle::operator=(ph);
-    close();
-    _internal_copy(ph);
-  }
-  return *this;
-}
+pipe_handle::~pipe_handle() noexcept { close(); }
 
 /**
  *  Close the file descriptor.
  */
-void pipe_handle::close() throw() {
+void pipe_handle::close() noexcept {
   if (_fd >= 0) {
     {
       std::lock_guard<std::mutex> lock(gl_fdsm);
@@ -125,7 +100,7 @@ void pipe_handle::close_all_handles() {
  *
  *  @return Pipe FD.
  */
-int pipe_handle::get_native_handle() throw() { return _fd; }
+int pipe_handle::get_native_handle() noexcept { return _fd; }
 
 /**
  *  Initialize static members of the pipe_handle class.
@@ -183,30 +158,4 @@ unsigned long pipe_handle::write(void const* data, unsigned long size) {
     throw(basic_error() << "could not write to pipe: " << msg);
   }
   return wb;
-}
-
-/**************************************
-*                                     *
-*           Private Methods           *
-*                                     *
-**************************************/
-
-/**
- *  Copy internal data members.
- *
- *  @param[in] ph Object to copy.
- */
-void pipe_handle::_internal_copy(pipe_handle const& ph) {
-  if (ph._fd >= 0) {
-    _fd = dup(ph._fd);
-    if (_fd < 0) {
-      char const* msg(strerror(errno));
-      throw(basic_error() << "could not duplicate pipe: " << msg);
-    }
-    {
-      std::lock_guard<std::mutex> lock(gl_fdsm);
-      gl_fds.insert(_fd);
-    }
-  } else
-    _fd = -1;
 }
