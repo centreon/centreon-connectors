@@ -167,21 +167,22 @@ void policy::on_execute(uint64_t cmd_id,
           << "creating session for " << user << "@" << host << ":" << port;
       std::unique_ptr<sessions::session> sess{new sessions::session(creds)};
       sess->connect(use_ipv6);
-      _sessions[creds] = sess.get();
-      sess.release();
+      _sessions[creds] = sess.release();
       it = _sessions.find(creds);
     }
+
+    sessions::session* sess = it->second;
 
     // Create check object.
     checks::check* chk_ptr = new checks::check(skip_stdout, skip_stderr);
     chk_ptr->listen(this);
-    _checks[cmd_id] = std::make_pair(chk_ptr, it->second);
+    _checks[cmd_id] = std::make_pair(chk_ptr, sess);
 
     // Release lock and run copied pointer (we might be called in
     // on_result() and mutex must be available).
     lock.unlock();
 
-    chk_ptr->execute(*it->second, cmd_id, cmds, timeout);
+    chk_ptr->execute(*sess, cmd_id, cmds, timeout);
   } catch (std::exception const& e) {
     log_error(logging::low)
         << "could not launch check ID " << cmd_id << " on host " << host

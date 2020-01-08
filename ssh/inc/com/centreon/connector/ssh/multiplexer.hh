@@ -39,7 +39,6 @@ class multiplexer : public com::centreon::task_manager,
 
  public:
   static multiplexer& instance() noexcept;
-  ~multiplexer() = default;
   multiplexer(multiplexer const& m) = delete;
   multiplexer& operator=(multiplexer const& m) = delete;
   static void load();

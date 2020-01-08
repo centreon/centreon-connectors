@@ -36,19 +36,15 @@ class check;
  *  Task executed when a check timeouts.
  */
 class timeout : public com::centreon::task {
+  check* _check;
+
  public:
   timeout(check* chk = NULL);
+  ~timeout() noexcept;
   timeout(timeout const& t) = delete;
-  ~timeout() throw();
   timeout& operator=(timeout const& t) = delete;
-  check* get_check() const throw();
+  check* get_check() const noexcept;
   void run();
-  void set_check(check* chk) throw();
-
- private:
-  void _internal_copy(timeout const& t);
-
-  check* _check;
 };
 }  // namespace checks
 

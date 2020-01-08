@@ -254,6 +254,6 @@ void parser::_parse(std::string const& cmd) {
         _listnr->on_quit();
       break;
     default:
-      throw(basic_error() << "invalid command received (ID " << id << ")");
+      throw basic_error() << "invalid command received (ID " << id << ")";
   };
 }

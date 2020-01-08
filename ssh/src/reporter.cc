@@ -47,7 +47,7 @@ reporter::reporter(reporter const& r) : com::centreon::handle_listener(r) {
 /**
  *  Destructor.
  */
-reporter::~reporter() throw() {
+reporter::~reporter() noexcept {
   log_info(logging::medium) << "connector reported " << _reported
                             << " check results to monitoring engine";
 }
@@ -64,7 +64,7 @@ reporter& reporter::operator=(reporter const& r) {
     com::centreon::handle_listener::operator=(r);
     _copy(r);
   }
-  return (*this);
+  return *this;
 }
 
 /**
@@ -86,7 +86,6 @@ void reporter::error(handle& h) {
   _can_report = false;
   throw(basic_error() << "error detected on the handle used"
                          " to report to the monitoring engine");
-  return;
 }
 
 /**
@@ -139,7 +138,6 @@ void reporter::send_result(checks::result const& r) {
     oss.put('\0');
   // Append packet to write buffer.
   _buffer.append(oss.str());
-  return;
 }
 
 /**
@@ -149,6 +147,9 @@ void reporter::send_result(checks::result const& r) {
  *  @param[in] minor Minor protocol version.
  */
 void reporter::send_version(unsigned int major, unsigned int minor) {
+  //FIXME DBR
+  log_info(logging::low) << "reporter::send_version";
+
   // Build packet.
   log_debug(logging::medium) << "sending protocol version " << major << "."
                              << minor << " to monitoring engine";
@@ -165,8 +166,6 @@ void reporter::send_version(unsigned int major, unsigned int minor) {
 
   // Send packet back to monitoring engine.
   _buffer.append(oss.str());
-
-  return;
 }
 
 /**
@@ -176,7 +175,10 @@ void reporter::send_version(unsigned int major, unsigned int minor) {
  */
 bool reporter::want_write(handle& h) {
   (void)h;
-  return (can_report() && !_buffer.empty());
+  //FIXME DBR
+  log_info(logging::low) << "reporter::want_write";
+
+  return can_report() && !_buffer.empty();
 }
 
 /**
@@ -185,9 +187,10 @@ bool reporter::want_write(handle& h) {
  *  @param[in] h Handle.
  */
 void reporter::write(handle& h) {
+  //FIXME DBR
+  log_info(logging::low) << "reporter::write";
   unsigned long wb(h.write(_buffer.c_str(), _buffer.size()));
   _buffer.erase(0, wb);
-  return;
 }
 
 /**************************************
@@ -205,5 +208,4 @@ void reporter::_copy(reporter const& r) {
   _buffer = r._buffer;
   _can_report = r._can_report;
   _reported = r._reported;
-  return;
 }
