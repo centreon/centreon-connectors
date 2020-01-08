@@ -36,25 +36,23 @@ namespace orders {
  *  and one listener.
  */
 class parser : public handle_listener {
+  std::string _buffer;
+  listener* _listnr;
+
+  void _parse(std::string const& cmd);
+
  public:
   parser();
-  parser(parser const& p);
-  ~parser() throw();
-  parser& operator=(parser const& p);
+  ~parser() noexcept {};
+  parser(parser const& p) = delete;
+  parser& operator=(parser const& p) = delete;
   void error(handle& h);
-  std::string const& get_buffer() const throw();
-  listener* get_listener() const throw();
-  void listen(listener* l = NULL) throw();
+  std::string const& get_buffer() const noexcept;
+  listener* get_listener() const noexcept;
+  void listen(listener* l = nullptr) noexcept;
   void read(handle& h);
   bool want_read(handle& h);
   bool want_write(handle& h);
-
- private:
-  void _copy(parser const& p);
-  void _parse(std::string const& cmd);
-
-  std::string _buffer;
-  listener* _listnr;
 };
 }  // namespace orders
 

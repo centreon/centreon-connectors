@@ -35,36 +35,7 @@ using namespace com::centreon::connector::ssh::orders;
 /**
  *  Default constructor.
  */
-parser::parser() : _listnr(NULL) {}
-
-/**
- *  Copy constructor.
- *
- *  @param[in] p Object to copy.
- */
-parser::parser(parser const& p) : handle_listener(p) {
-  _copy(p);
-}
-
-/**
- *  Destructor.
- */
-parser::~parser() noexcept {}
-
-/**
- *  Assignment operator.
- *
- *  @param[in] p Object to copy.
- *
- *  @return This object.
- */
-parser& parser::operator=(parser const& p) {
-  if (this != &p) {
-    handle_listener::operator=(p);
-    _copy(p);
-  }
-  return *this;
-}
+parser::parser() : _listnr(nullptr) {}
 
 /**
  *  Got error event on handle.
@@ -127,8 +98,7 @@ void parser::read(handle& h) {
     _buffer.append(buffer, rb);
 
     // Find a command boundary.
-    char boundary[4];
-    memset(boundary, 0, sizeof(boundary));
+    char boundary[4] { 0, 0, 0, 0 };
     size_t bound(_buffer.find(boundary, 0, sizeof(boundary)));
 
     // Parse command.
@@ -183,16 +153,6 @@ bool parser::want_write(handle& h) {
  *           Private Methods           *
  *                                     *
  **************************************/
-
-/**
- *  Copy internal data members.
- *
- *  @param[in] p Object to copy.
- */
-void parser::_copy(parser const& p) {
-  _buffer = p._buffer;
-  _listnr = p._listnr;
-}
 
 /**
  *  @brief Parse a command.

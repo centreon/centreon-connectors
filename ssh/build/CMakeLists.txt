@@ -332,9 +332,7 @@ set(CONNECTOR_TEST_LIST
     ${TEST_DIR}/reporter/send_result.cc
     ${TEST_DIR}/reporter/error.cc
     ${TEST_DIR}/orders/parser/execute.cc
-    ${TEST_DIR}/orders/parser/assignment.cc
     ${TEST_DIR}/orders/parser/close.cc
-    ${TEST_DIR}/orders/parser/ctor_copy.cc
     ${TEST_DIR}/orders/parser/ctor_default.cc
     ${TEST_DIR}/orders/parser/eof.cc
     ${TEST_DIR}/orders/parser/error.cc
