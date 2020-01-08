@@ -36,35 +36,11 @@ using namespace com::centreon::connector::ssh;
 reporter::reporter() : _can_report(true), _reported(0) {}
 
 /**
- *  Copy constructor.
- *
- *  @param[in] r Object to copy.
- */
-reporter::reporter(reporter const& r) : com::centreon::handle_listener(r) {
-  _copy(r);
-}
-
-/**
  *  Destructor.
  */
 reporter::~reporter() noexcept {
   log_info(logging::medium) << "connector reported " << _reported
                             << " check results to monitoring engine";
-}
-
-/**
- *  Assignment operator.
- *
- *  @param[in] r Object to copy.
- *
- *  @return This object.
- */
-reporter& reporter::operator=(reporter const& r) {
-  if (this != &r) {
-    com::centreon::handle_listener::operator=(r);
-    _copy(r);
-  }
-  return *this;
 }
 
 /**
@@ -147,9 +123,6 @@ void reporter::send_result(checks::result const& r) {
  *  @param[in] minor Minor protocol version.
  */
 void reporter::send_version(unsigned int major, unsigned int minor) {
-  //FIXME DBR
-  log_info(logging::low) << "reporter::send_version";
-
   // Build packet.
   log_debug(logging::medium) << "sending protocol version " << major << "."
                              << minor << " to monitoring engine";
@@ -175,9 +148,6 @@ void reporter::send_version(unsigned int major, unsigned int minor) {
  */
 bool reporter::want_write(handle& h) {
   (void)h;
-  //FIXME DBR
-  log_info(logging::low) << "reporter::want_write";
-
   return can_report() && !_buffer.empty();
 }
 
@@ -187,25 +157,6 @@ bool reporter::want_write(handle& h) {
  *  @param[in] h Handle.
  */
 void reporter::write(handle& h) {
-  //FIXME DBR
-  log_info(logging::low) << "reporter::write";
   unsigned long wb(h.write(_buffer.c_str(), _buffer.size()));
   _buffer.erase(0, wb);
-}
-
-/**************************************
- *                                     *
- *           Private Methods           *
- *                                     *
- **************************************/
-
-/**
- *  Copy internal data members.
- *
- *  @param[in] r Object to copy.
- */
-void reporter::_copy(reporter const& r) {
-  _buffer = r._buffer;
-  _can_report = r._can_report;
-  _reported = r._reported;
 }
