@@ -34,10 +34,7 @@ namespace orders {
  */
 class options {
  public:
-  enum ip_protocol {
-    ip_v4 = 0,
-    ip_v6 = 1
-  };
+  enum ip_protocol { ip_v4 = 0, ip_v6 = 1 };
 
   options(std::string const& cmdline = "");
   options(options const& p);
@@ -71,7 +68,7 @@ class options {
   unsigned int _timeout;
   std::string _user;
 };
-}
+}  // namespace orders
 
 CCCS_END()
 

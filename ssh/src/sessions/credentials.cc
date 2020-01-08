@@ -21,10 +21,10 @@
 using namespace com::centreon::connector::ssh::sessions;
 
 /**************************************
-*                                     *
-*           Public Methods            *
-*                                     *
-**************************************/
+ *                                     *
+ *           Public Methods            *
+ *                                     *
+ **************************************/
 
 /**
  *  @brief Default constructor.
@@ -55,7 +55,9 @@ credentials::credentials(std::string const& host,
  *
  *  @param[in] c Object to copy.
  */
-credentials::credentials(credentials const& c) { _copy(c); }
+credentials::credentials(credentials const& c) {
+  _copy(c);
+}
 
 /**
  *  Destructor.
@@ -128,35 +130,45 @@ bool credentials::operator<(credentials const& c) const {
  *
  *  @return Host.
  */
-std::string const& credentials::get_host() const { return (_host); }
+std::string const& credentials::get_host() const {
+  return (_host);
+}
 
 /**
  *  Get the key file.
  *
  *  @return Identity file.
  */
-std::string const& credentials::get_key() const { return (_key); }
+std::string const& credentials::get_key() const {
+  return (_key);
+}
 
 /**
  *  Get the password.
  *
  *  @return Password.
  */
-std::string const& credentials::get_password() const { return (_password); }
+std::string const& credentials::get_password() const {
+  return (_password);
+}
 
 /**
  *  Get the port.
  *
  *  @return Port.
  */
-unsigned short credentials::get_port() const { return (_port); }
+unsigned short credentials::get_port() const {
+  return (_port);
+}
 
 /**
  *  Get the user.
  *
  *  @return User.
  */
-std::string const& credentials::get_user() const { return (_user); }
+std::string const& credentials::get_user() const {
+  return (_user);
+}
 
 /**
  *  Set key file.
@@ -209,10 +221,10 @@ void credentials::set_user(std::string const& user) {
 }
 
 /**************************************
-*                                     *
-*           Private Methods           *
-*                                     *
-**************************************/
+ *                                     *
+ *           Private Methods           *
+ *                                     *
+ **************************************/
 
 /**
  *  Copy internal data members.

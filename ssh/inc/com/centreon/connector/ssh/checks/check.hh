@@ -19,9 +19,9 @@
 #ifndef CCCS_CHECKS_CHECK_HH
 #define CCCS_CHECKS_CHECK_HH
 
+#include <ctime>
 #include <list>
 #include <string>
-#include <ctime>
 #include "com/centreon/connector/ssh/checks/listener.hh"
 #include "com/centreon/connector/ssh/namespace.hh"
 #include "com/centreon/connector/ssh/sessions/listener.hh"
@@ -55,12 +55,7 @@ class check : public sessions::listener {
   void unlisten(checks::listener* listnr);
 
  private:
-  enum e_step {
-    chan_open = 1,
-    chan_exec,
-    chan_read,
-    chan_close
-  };
+  enum e_step { chan_open = 1, chan_exec, chan_read, chan_close };
 
   check(check const& c);
   check& operator=(check const& c);
@@ -83,7 +78,7 @@ class check : public sessions::listener {
   e_step _step;
   unsigned long _timeout;
 };
-}
+}  // namespace checks
 
 CCCS_END()
 

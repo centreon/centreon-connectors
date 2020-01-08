@@ -16,12 +16,12 @@
 ** For more information : contact@centreon.com
 */
 
+#include "com/centreon/connector/perl/pipe_handle.hh"
+#include <unistd.h>
 #include <cerrno>
 #include <cstring>
-#include <set>
 #include <mutex>
-#include <unistd.h>
-#include "com/centreon/connector/perl/pipe_handle.hh"
+#include <set>
 #include "com/centreon/exceptions/basic.hh"
 #include "com/centreon/logging/logger.hh"
 
@@ -29,31 +29,35 @@ using namespace com::centreon;
 using namespace com::centreon::connector::perl;
 
 /**************************************
-*                                     *
-*           Local Objects             *
-*                                     *
-**************************************/
+ *                                     *
+ *           Local Objects             *
+ *                                     *
+ **************************************/
 
 static std::multiset<int> gl_fds;
 static std::mutex gl_fdsm;
 
 /**************************************
-*                                     *
-*           Public Methods            *
-*                                     *
-**************************************/
+ *                                     *
+ *           Public Methods            *
+ *                                     *
+ **************************************/
 
 /**
  *  Constructor.
  *
  *  @param[in] fd File descriptor.
  */
-pipe_handle::pipe_handle(int fd) : _fd(-1) { set_fd(fd); }
+pipe_handle::pipe_handle(int fd) : _fd(-1) {
+  set_fd(fd);
+}
 
 /**
  *  Destructor.
  */
-pipe_handle::~pipe_handle() noexcept { close(); }
+pipe_handle::~pipe_handle() noexcept {
+  close();
+}
 
 /**
  *  Close the file descriptor.
@@ -80,8 +84,7 @@ void pipe_handle::close() noexcept {
 void pipe_handle::close_all_handles() {
   std::lock_guard<std::mutex> lock(gl_fdsm);
   for (std::multiset<int>::const_iterator it(gl_fds.begin()), end(gl_fds.end());
-       it != end;
-       ++it) {
+       it != end; ++it) {
     int retval;
     do {
       retval = ::close(*it);
@@ -89,7 +92,7 @@ void pipe_handle::close_all_handles() {
     if (retval != 0) {
       char const* msg(strerror(errno));
       gl_fds.erase(gl_fds.begin(), it);
-      throw(basic_error() << msg);
+      throw basic_error() << msg;
     }
   }
   gl_fds.clear();
@@ -100,7 +103,9 @@ void pipe_handle::close_all_handles() {
  *
  *  @return Pipe FD.
  */
-int pipe_handle::get_native_handle() noexcept { return _fd; }
+int pipe_handle::get_native_handle() noexcept {
+  return _fd;
+}
 
 /**
  *  Read data from the file descriptor.
@@ -114,7 +119,7 @@ unsigned long pipe_handle::read(void* data, unsigned long size) {
   ssize_t rb(::read(_fd, data, size));
   if (rb < 0) {
     char const* msg(strerror(errno));
-    throw(basic_error() << "could not read from pipe: " << msg);
+    throw basic_error() << "could not read from pipe: " << msg;
   }
   return rb;
 }
@@ -145,7 +150,7 @@ unsigned long pipe_handle::write(void const* data, unsigned long size) {
   ssize_t wb(::write(_fd, data, size));
   if (wb <= 0) {
     char const* msg(strerror(errno));
-    throw(basic_error() << "could not write to pipe: " << msg);
+    throw basic_error() << "could not write to pipe: " << msg;
   }
   return wb;
 }

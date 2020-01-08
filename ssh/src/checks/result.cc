@@ -21,10 +21,10 @@
 using namespace com::centreon::connector::ssh::checks;
 
 /**************************************
-*                                     *
-*           Public Methods            *
-*                                     *
-**************************************/
+ *                                     *
+ *           Public Methods            *
+ *                                     *
+ **************************************/
 
 /**
  *  Default constructor.
@@ -36,7 +36,9 @@ result::result() : _cmd_id(0), _executed(false), _exit_code(-1) {}
  *
  *  @param[in] r Object to copy.
  */
-result::result(result const& r) { _internal_copy(r); }
+result::result(result const& r) {
+  _internal_copy(r);
+}
 
 /**
  *  Destructor.
@@ -61,35 +63,45 @@ result& result::operator=(result const& r) {
  *
  *  @return Command ID.
  */
-unsigned long long result::get_command_id() const throw() { return (_cmd_id); }
+unsigned long long result::get_command_id() const throw() {
+  return (_cmd_id);
+}
 
 /**
  *  Get the check error string.
  *
  *  @return Check error string.
  */
-std::string const& result::get_error() const throw() { return (_error); }
+std::string const& result::get_error() const throw() {
+  return (_error);
+}
 
 /**
  *  Get the executed flag.
  *
  *  @return true if check was executed, false otherwise.
  */
-bool result::get_executed() const throw() { return (_executed); }
+bool result::get_executed() const throw() {
+  return (_executed);
+}
 
 /**
  *  Get the exit code.
  *
  *  @return Check exit code.
  */
-int result::get_exit_code() const throw() { return (_exit_code); }
+int result::get_exit_code() const throw() {
+  return (_exit_code);
+}
 
 /**
  *  Get the check output.
  *
  *  @return Check output.
  */
-std::string const& result::get_output() const throw() { return (_output); }
+std::string const& result::get_output() const throw() {
+  return (_output);
+}
 
 /**
  *  Set the command ID.
@@ -143,10 +155,10 @@ void result::set_output(std::string const& output) {
 }
 
 /**************************************
-*                                     *
-*           Private Methods           *
-*                                     *
-**************************************/
+ *                                     *
+ *           Private Methods           *
+ *                                     *
+ **************************************/
 
 /**
  *  Copy internal data members.

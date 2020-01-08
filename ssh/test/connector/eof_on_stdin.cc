@@ -41,5 +41,5 @@ int main() {
   } else
     retval = (p.exit_code() != 0);
 
-  return (retval);
+  return retval;
 }

@@ -29,7 +29,7 @@ class session;
 
 /**
  *  @class listener listener.hh
- *"com/centreon/connector/ssh/sessions/listener.hh"
+ * "com/centreon/connector/ssh/sessions/listener.hh"
  *  @brief Session listener.
  *
  *  Listen session events.
@@ -44,7 +44,7 @@ class listener {
   virtual void on_close(session& s) = 0;
   virtual void on_connected(session& s) = 0;
 };
-}
+}  // namespace sessions
 
 CCCS_END()
 

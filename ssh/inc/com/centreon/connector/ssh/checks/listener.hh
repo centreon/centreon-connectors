@@ -39,7 +39,7 @@ class listener {
   listener& operator=(listener const& l) = delete;
   virtual void on_result(result const& result) = 0;
 };
-}
+}  // namespace checks
 
 CCCS_END()
 

@@ -19,16 +19,16 @@
 #ifdef _WIN32
 #include <windows.h>
 #else
-#include <cerrno>
-#include <cstring>
 #include <pwd.h>
 #include <unistd.h>
+#include <cerrno>
+#include <cstring>
 #endif  // Windows or POSIX.
-#include <cstdlib>
 #include <getopt.h>
+#include <cstdlib>
+#include "com/centreon/connector/ssh/orders/options.hh"
 #include "com/centreon/exceptions/basic.hh"
 #include "com/centreon/misc/command_line.hh"
-#include "com/centreon/connector/ssh/orders/options.hh"
 
 using namespace com::centreon::connector::ssh::orders;
 
@@ -60,10 +60,10 @@ static struct option optlong[] = {
     {NULL, no_argument, NULL, 0}};
 
 /**************************************
-*                                     *
-*           Public Methods            *
-*                                     *
-**************************************/
+ *                                     *
+ *           Public Methods            *
+ *                                     *
+ **************************************/
 
 /**
  *  Default constructor.
@@ -83,7 +83,9 @@ options::options(std::string const& cmdline)
  *
  *  @param[in] p Object to copy.
  */
-options::options(options const& right) { _copy(right); }
+options::options(options const& right) {
+  _copy(right);
+}
 
 /**
  *  Destructor.
@@ -126,7 +128,9 @@ std::list<std::string> const& options::get_commands() const throw() {
  *
  *  @return A string.
  */
-std::string const& options::get_host() const throw() { return (_host); }
+std::string const& options::get_host() const throw() {
+  return (_host);
+}
 
 /**
  *  Get identity of an authorized key.
@@ -151,21 +155,27 @@ options::ip_protocol options::get_ip_protocol() const throw() {
  *
  *  @return The port number.
  */
-unsigned short options::get_port() const throw() { return (_port); }
+unsigned short options::get_port() const throw() {
+  return (_port);
+}
 
 /**
  *  Get timeout connection.
  *
  *  @return The timeout.
  */
-unsigned int options::get_timeout() const throw() { return (_timeout); }
+unsigned int options::get_timeout() const throw() {
+  return (_timeout);
+}
 
 /**
  *  Get user use to connect on remote host.
  *
  *  @return The user name.
  */
-std::string const& options::get_user() const throw() { return (_user); }
+std::string const& options::get_user() const throw() {
+  return (_user);
+}
 
 /**
  *  Get the help string.
@@ -312,20 +322,24 @@ void options::parse(std::string const& cmdline) {
  *
  *  @return 0 to drop all data, n to keep n line, otherwise -1.
  */
-int options::skip_stderr() const throw() { return (_skip_stderr); }
+int options::skip_stderr() const throw() {
+  return (_skip_stderr);
+}
 
 /**
  *  Disable standard output.
  *
  *  @return 0 to drop all data, n to keep n line, otherwise -1.
  */
-int options::skip_stdout() const throw() { return (_skip_stdout); }
+int options::skip_stdout() const throw() {
+  return (_skip_stdout);
+}
 
 /**************************************
-*                                     *
-*           Private Methods           *
-*                                     *
-**************************************/
+ *                                     *
+ *           Private Methods           *
+ *                                     *
+ **************************************/
 
 /**
  *  Copy internal data members.

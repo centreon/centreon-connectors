@@ -40,8 +40,8 @@ int main() {
   p.exec(CONNECTOR_SSH_BINARY);
 
   // Write command.
-  char const* ptr(CMD);
-  unsigned int size(sizeof(CMD) - 1);
+  const char* ptr(CMD);
+  size_t size(sizeof(CMD) - 1);
   while (size > 0) {
     unsigned int rb(p.write(ptr, size));
     size -= rb;
@@ -51,7 +51,7 @@ int main() {
 
   // Read reply.
   std::string output;
-  while (true) {
+  for (;;) {
     std::string buffer;
     p.read(buffer);
     if (buffer.empty())
@@ -69,16 +69,15 @@ int main() {
 
   try {
     if (retval)
-      throw(basic_error() << "invalid return code: " << retval);
+      throw basic_error() << "invalid return code: " << retval;
     if (output.size() != (sizeof(RESULT) - 1) ||
         memcmp(output.c_str(), RESULT, sizeof(RESULT) - 1))
       throw(basic_error() << "invalid output: size=" << output.size()
                           << ", output=" << output);
-  }
-  catch (std::exception const& e) {
+  } catch (std::exception const& e) {
     retval = 1;
     std::cerr << "error: " << e.what() << std::endl;
   }
 
-  return (retval);
+  return retval;
 }

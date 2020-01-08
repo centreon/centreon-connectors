@@ -27,7 +27,7 @@ CCCS_BEGIN()
 namespace sessions {
 /**
  *  @class socket_handle socket_handle.hh
- *"com/centreon/connector/ssh/socket_handle.hh"
+ * "com/centreon/connector/ssh/socket_handle.hh"
  *  @brief Socket handle.
  *
  *  Wrapper around a socket descriptor.
@@ -35,7 +35,7 @@ namespace sessions {
 class socket_handle : public com::centreon::handle {
  public:
   socket_handle(native_handle handl = native_handle_null);
-  ~socket_handle() throw();
+  ~socket_handle() noexcept;
   void close();
   native_handle get_native_handle();
   unsigned long read(void* data, unsigned long size);
@@ -48,7 +48,7 @@ class socket_handle : public com::centreon::handle {
 
   native_handle _handl;
 };
-}
+}  // namespace sessions
 
 CCCS_END()
 

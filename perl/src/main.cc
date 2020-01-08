@@ -75,8 +75,7 @@ int main(int argc, char** argv, char** env) {
     options opts;
     try {
       opts.parse(argc - 1, argv + 1);
-    }
-    catch (exceptions::basic const& e) {
+    } catch (exceptions::basic const& e) {
       std::cout << e.what() << std::endl << opts.usage() << std::endl;
       multiplexer::unload();
       return EXIT_FAILURE;

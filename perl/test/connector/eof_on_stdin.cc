@@ -41,5 +41,5 @@ int main() {
     p.wait();
   } else
     retval = (p.exit_code() != 0);
-  return (retval);
+  return retval;
 }

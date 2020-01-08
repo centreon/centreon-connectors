@@ -56,7 +56,7 @@ class parser : public handle_listener {
   std::string _buffer;
   listener* _listnr;
 };
-}
+}  // namespace orders
 
 CCCS_END()
 

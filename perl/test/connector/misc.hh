@@ -18,6 +18,7 @@
 
 #ifndef TEST_CONNECTOR_MISC_HH
 #define TEST_CONNECTOR_MISC_HH
+#include <string>
 
 std::string& replace_null(std::string& str);
 void write_file(char const* filename,

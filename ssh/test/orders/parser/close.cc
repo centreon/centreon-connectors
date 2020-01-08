@@ -50,5 +50,5 @@ int main() {
     retval |=
         (listnr.get_callbacks().begin()->callback != fake_listener::cb_eof);
 
-  return (retval);
+  return retval;
 }

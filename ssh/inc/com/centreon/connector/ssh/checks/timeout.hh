@@ -50,7 +50,7 @@ class timeout : public com::centreon::task {
 
   check* _check;
 };
-}
+}  // namespace checks
 
 CCCS_END()
 

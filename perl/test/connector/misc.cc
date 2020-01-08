@@ -16,11 +16,11 @@
 ** For more information : contact@centreon.com
 */
 
+#include "test/connector/misc.hh"
 #include <cstdio>
 #include <cstring>
 #include <string>
 #include "com/centreon/exceptions/basic.hh"
-#include "test/connector/misc.hh"
 
 using namespace com::centreon;
 

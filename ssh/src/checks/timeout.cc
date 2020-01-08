@@ -16,16 +16,16 @@
 ** For more information : contact@centreon.com
 */
 
-#include "com/centreon/connector/ssh/checks/check.hh"
 #include "com/centreon/connector/ssh/checks/timeout.hh"
+#include "com/centreon/connector/ssh/checks/check.hh"
 
 using namespace com::centreon::connector::ssh::checks;
 
 /**************************************
-*                                     *
-*           Public Methods            *
-*                                     *
-**************************************/
+ *                                     *
+ *           Public Methods            *
+ *                                     *
+ **************************************/
 
 /**
  *  Constructor.
@@ -68,7 +68,9 @@ timeout::~timeout() throw() {}
  *
  *  @return Check object.
  */
-check* timeout::get_check() const throw() { return (_check); }
+check* timeout::get_check() const throw() {
+  return (_check);
+}
 
 /**
  *  Notify check of timeout.
@@ -90,10 +92,10 @@ void timeout::set_check(check* chk) throw() {
 }
 
 /**************************************
-*                                     *
-*           Private Methods           *
-*                                     *
-**************************************/
+ *                                     *
+ *           Private Methods           *
+ *                                     *
+ **************************************/
 
 /**
  *  Copy internal data members.

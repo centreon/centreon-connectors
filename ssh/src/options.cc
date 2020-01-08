@@ -16,8 +16,8 @@
 ** For more information : contact@centreon.com
 */
 
-#include <sstream>
 #include "com/centreon/connector/ssh/orders/options.hh"
+#include <sstream>
 #include "com/centreon/connector/ssh/options.hh"
 
 using namespace com::centreon::connector::ssh;
@@ -32,22 +32,26 @@ static char const* const log_file_description =
     "Specifies the log file (default: stderr).";
 
 /**************************************
-*                                     *
-*           Public Methods            *
-*                                     *
-**************************************/
+ *                                     *
+ *           Public Methods            *
+ *                                     *
+ **************************************/
 
 /**
  *  Default constructor.
  */
-options::options() { _init(); }
+options::options() {
+  _init();
+}
 
 /**
  *  Copy constructor.
  *
  *  @param[in] opts Object to copy.
  */
-options::options(options const& opts) : misc::get_options(opts) { _init(); }
+options::options(options const& opts) : misc::get_options(opts) {
+  _init();
+}
 
 /**
  *  Destructor.
@@ -81,7 +85,8 @@ std::string options::help() const {
       << "Commands must be sent on the connector's standard input.\n"
       << "They must be sent using Centreon Connector protocol version\n"
       << "1.0 and support the following options:\n"
-      << "\n" << orders::options::help() << "\n"
+      << "\n"
+      << orders::options::help() << "\n"
       << "Check results will be sent back using also the Centreon\n"
       << "Connector protocol version 1.0, on the process' standard\n"
       << "output.";
@@ -94,18 +99,22 @@ std::string options::help() const {
  *  @param[in] argc Arguments count.
  *  @param[in] argv Arguments values.
  */
-void options::parse(int argc, char* argv[]) { _parse_arguments(argc, argv); }
+void options::parse(int argc, char* argv[]) {
+  _parse_arguments(argc, argv);
+}
 
 /**
  *  Get the program usage.
  */
-std::string options::usage() const { return help(); }
+std::string options::usage() const {
+  return help();
+}
 
 /**************************************
-*                                     *
-*           Private Methods           *
-*                                     *
-**************************************/
+ *                                     *
+ *           Private Methods           *
+ *                                     *
+ **************************************/
 
 /**
  *  Init argument table.

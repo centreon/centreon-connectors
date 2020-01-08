@@ -87,8 +87,7 @@ int main(int argc, char* argv[]) {
     options opts;
     try {
       opts.parse(argc - 1, argv + 1);
-    }
-    catch (exceptions::basic const& e) {
+    } catch (exceptions::basic const& e) {
       std::cout << e.what() << std::endl << opts.usage() << std::endl;
       return EXIT_FAILURE;
     }
@@ -153,8 +152,7 @@ int main(int argc, char* argv[]) {
       policy p;
       retval = (p.run() ? EXIT_SUCCESS : EXIT_FAILURE);
     }
-  }
-  catch (std::exception const& e) {
+  } catch (std::exception const& e) {
     log_error(logging::low) << e.what();
   }
 

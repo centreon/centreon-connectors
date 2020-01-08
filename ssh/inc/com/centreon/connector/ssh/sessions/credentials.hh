@@ -27,7 +27,7 @@ CCCS_BEGIN()
 namespace sessions {
 /**
  *  @class credentials credentials.hh
- *"com/centreon/connector/ssh/sessions/credentials.hh"
+ * "com/centreon/connector/ssh/sessions/credentials.hh"
  *  @brief Connection credentials.
  *
  *  Bundle together connection credentials : host, user and
@@ -67,7 +67,7 @@ class credentials {
   unsigned short _port;
   std::string _user;
 };
-}
+}  // namespace sessions
 
 CCCS_END()
 

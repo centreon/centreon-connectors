@@ -52,5 +52,5 @@ int main() {
              (p2.get_buffer() != std::string(DATA, sizeof(DATA))) ||
              (p2.get_listener() != &fl));
 
-  return (retval);
+  return retval;
 }

@@ -119,12 +119,11 @@ int main() {
     if (nb_right_output != COUNT)
       throw(basic_error() << "invalid output: size=" << output.size()
                           << ", output=" << replace_null(output));
-  }
-  catch (std::exception const& e) {
+  } catch (std::exception const& e) {
     std::cerr << "error: " << e.what() << std::endl;
     retval = 1;
   }
 
   // Return check result.
-  return (retval);
+  return retval;
 }

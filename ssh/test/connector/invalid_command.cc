@@ -67,5 +67,5 @@ int main() {
     std::cout << "exit code: " << exit_code << std::endl;
   }
 
-  return (retval ? EXIT_FAILURE : EXIT_SUCCESS);
+  return retval ? EXIT_FAILURE : EXIT_SUCCESS;
 }

@@ -92,11 +92,10 @@ int main() {
         memcmp(output.c_str(), RESULT, sizeof(RESULT) - 1))
       throw(basic_error() << "invalid output: size=" << output.size()
                           << ", output=" << output);
-  }
-  catch (std::exception const& e) {
+  } catch (std::exception const& e) {
     retval = 1;
     std::cerr << "error: " << e.what() << std::endl;
   }
 
-  return (retval);
+  return retval;
 }

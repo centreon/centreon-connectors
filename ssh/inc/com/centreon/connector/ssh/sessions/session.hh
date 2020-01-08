@@ -40,15 +40,15 @@ namespace sessions {
 class session : public com::centreon::handle_listener {
  public:
   session(credentials const& creds);
-  ~session() throw();
+  ~session() noexcept;
   void close();
   void connect(bool use_ipv6 = false);
   void error();
   void error(handle& h);
-  credentials const& get_credentials() const throw();
-  LIBSSH2_SESSION* get_libssh2_session() const throw();
-  socket_handle* get_socket_handle() throw();
-  bool is_connected() const throw();
+  credentials const& get_credentials() const noexcept;
+  LIBSSH2_SESSION* get_libssh2_session() const noexcept;
+  socket_handle* get_socket_handle() noexcept;
+  bool is_connected() const noexcept;
   void listen(listener* listnr);
   LIBSSH2_CHANNEL* new_channel();
   void read(handle& h);
@@ -82,7 +82,7 @@ class session : public com::centreon::handle_listener {
   e_step _step;
   char const* _step_string;
 };
-}
+}  // namespace sessions
 
 CCCS_END()
 

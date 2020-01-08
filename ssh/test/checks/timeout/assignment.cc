@@ -16,9 +16,9 @@
 ** For more information : contact@centreon.com
 */
 
-#include <cassert>
 #include "com/centreon/connector/ssh/checks/check.hh"
 #include "com/centreon/connector/ssh/checks/timeout.hh"
+#include "com/centreon/connector/ssh/multiplexer.hh"
 
 using namespace com::centreon::connector::ssh;
 

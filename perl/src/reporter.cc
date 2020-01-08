@@ -16,19 +16,19 @@
 ** For more information : contact@centreon.com
 */
 
+#include "com/centreon/connector/perl/reporter.hh"
 #include <sstream>
 #include "com/centreon/connector/perl/checks/result.hh"
-#include "com/centreon/connector/perl/reporter.hh"
 #include "com/centreon/exceptions/basic.hh"
 #include "com/centreon/logging/logger.hh"
 
 using namespace com::centreon::connector::perl;
 
 /**************************************
-*                                     *
-*           Public Methods            *
-*                                     *
-**************************************/
+ *                                     *
+ *           Public Methods            *
+ *                                     *
+ **************************************/
 
 /**
  *  Default constructor.
@@ -72,7 +72,9 @@ reporter& reporter::operator=(reporter const& r) {
  *
  *  @return true if reporter can report.
  */
-bool reporter::can_report() const throw() { return (_can_report); }
+bool reporter::can_report() const throw() {
+  return (_can_report);
+}
 
 /**
  *  Error event on the handle.
@@ -92,7 +94,9 @@ void reporter::error(handle& h) {
  *
  *  @return Internal buffer.
  */
-std::string const& reporter::get_buffer() const throw() { return (_buffer); }
+std::string const& reporter::get_buffer() const throw() {
+  return (_buffer);
+}
 
 /**
  *  Report check result.
@@ -187,10 +191,10 @@ void reporter::write(handle& h) {
 }
 
 /**************************************
-*                                     *
-*           Private Methods           *
-*                                     *
-**************************************/
+ *                                     *
+ *           Private Methods           *
+ *                                     *
+ **************************************/
 
 /**
  *  Copy internal data members.

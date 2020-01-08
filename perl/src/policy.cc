@@ -16,15 +16,15 @@
 ** For more information : contact@centreon.com
 */
 
+#include "com/centreon/connector/perl/policy.hh"
+#include <sys/wait.h>
 #include <cerrno>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
 #include <memory>
-#include <sys/wait.h>
 #include "com/centreon/connector/perl/checks/check.hh"
 #include "com/centreon/connector/perl/multiplexer.hh"
-#include "com/centreon/connector/perl/policy.hh"
 #include "com/centreon/exceptions/basic.hh"
 #include "com/centreon/logging/logger.hh"
 
@@ -35,10 +35,10 @@ using namespace com::centreon::connector::perl;
 extern volatile bool should_exit;
 
 /**************************************
-*                                     *
-*           Public Methods            *
-*                                     *
-**************************************/
+ *                                     *
+ *           Public Methods            *
+ *                                     *
+ **************************************/
 
 /**
  *  Default constructor.
@@ -62,19 +62,16 @@ policy::~policy() throw() {
   try {
     multiplexer::instance().handle_manager::remove(&_sin);
     multiplexer::instance().handle_manager::remove(&_sout);
-  }
-  catch (...) {
+  } catch (...) {
   }
 
   // Close checks.
   for (std::map<pid_t, checks::check*>::iterator it = _checks.begin(),
                                                  end = _checks.end();
-       it != end;
-       ++it) {
+       it != end; ++it) {
     try {
       it->second->unlisten(this);
-    }
-    catch (...) {
+    } catch (...) {
     }
     delete it->second;
   }
@@ -112,10 +109,8 @@ void policy::on_execute(unsigned long long cmd_id,
   chk->listen(this);
   try {
     pid_t child(chk->execute(cmd_id, cmd, timeout));
-    _checks[child] = chk.get();
-    chk.release();
-  }
-  catch (std::exception const& e) {
+    _checks[child] = chk.release();
+  } catch (std::exception const& e) {
     log_info(logging::low) << "execution of check " << cmd_id
                            << " failed: " << e.what();
     checks::result r;
@@ -172,29 +167,34 @@ bool policy::run() {
     multiplexer::instance().multiplex();
 
     // Is there some terminated child ?
-    int status(0);
+    int status;
     pid_t child(waitpid(0, &status, WNOHANG));
-    while ((child != 0) && (child != (pid_t) - 1)) {
-      // Check for error.
-      if ((child == (pid_t) - 1) && (errno != ECHILD)) {
-        char const* msg(strerror(errno));
-        throw(basic_error() << "waitpid failed: " << msg);
-      }
-
+    while (child != 0 && child != (pid_t)-1) {
       // Handle process termination.
-      log_info(logging::medium) << "process " << child << " exited with status "
-                                << status;
+      log_info(logging::medium)
+          << "process " << child << " exited with status " << status;
       std::map<pid_t, checks::check*>::iterator it;
       it = _checks.find(child);
       if (it != _checks.end()) {
         std::unique_ptr<checks::check> chk(it->second);
         _checks.erase(it);
+        if (WIFSIGNALED(status))
+          log_error(logging::medium)
+              << "process " << child << " exited because of a signal "
+              << WTERMSIG(status) << "\n";
+
         chk->terminated(WIFEXITED(status) ? WEXITSTATUS(status) : -1);
       }
       log_debug(logging::medium) << _checks.size() << " checks still running";
 
       // Is there any other terminated child ?
       child = waitpid(0, &status, WNOHANG);
+    }
+
+    // Check for error.
+    if (child == (pid_t)-1 && errno != ECHILD) {
+      char const* msg(strerror(errno));
+      throw basic_error() << "waitpid failed: " << msg;
     }
   }
 

@@ -56,7 +56,7 @@ class listener {
   virtual void on_quit() = 0;
   virtual void on_version() = 0;
 };
-}
+}  // namespace orders
 
 CCCS_END()
 

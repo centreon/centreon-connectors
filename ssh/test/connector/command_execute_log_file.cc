@@ -17,9 +17,9 @@
 */
 
 #include <cstring>
+#include <fstream>
 #include <iostream>
 #include <sstream>
-#include <fstream>
 #include <string>
 #include "com/centreon/exceptions/basic.hh"
 #include "com/centreon/process.hh"
@@ -123,16 +123,14 @@ int main() {
       if (line.find(
               "[info] Centreon SSH Connector " CENTREON_CONNECTOR_SSH_VERSION
               " starting") == std::string::npos)
-        throw(basic_error() << "bad content: the first line does not start "
-                               "with 'Centreon SSH "
-                               "Connector " CENTREON_CONNECTOR_SSH_VERSION
-                               " starting'");
+        throw(basic_error()
+              << "bad content: the first line does not start with 'Centreon "
+                 "SSH Connector " CENTREON_CONNECTOR_SSH_VERSION " starting'");
       file.close();
     } else {
       throw(basic_error() << "the file " LOG_FILE " has not been created.");
     }
-  }
-  catch (std::exception const& e) {
+  } catch (std::exception const& e) {
     retval = 1;
     std::cerr << "error: " << e.what() << std::endl;
   }

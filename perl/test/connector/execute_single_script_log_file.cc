@@ -125,16 +125,15 @@ int main() {
       if (line.find(
               "[info] Centreon Perl Connector " CENTREON_CONNECTOR_PERL_VERSION
               " starting") == std::string::npos)
-        throw(basic_error() << "bad content: the first line does not start "
-                               "with 'Centreon Perl "
-                               "Connector " CENTREON_CONNECTOR_PERL_VERSION
-                               " starting'");
+        throw basic_error()
+              << "bad content: the first line does not start with 'Centreon "
+                 "Perl Connector " CENTREON_CONNECTOR_PERL_VERSION
+                 " starting'";
       file.close();
     } else {
       throw(basic_error() << "the file " LOG_FILE " has not been created.");
     }
-  }
-  catch (std::exception const& e) {
+  } catch (std::exception const& e) {
     retval = 1;
     std::cerr << "error: " << e.what() << std::endl;
   }

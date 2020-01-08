@@ -16,23 +16,23 @@
 ** For more information : contact@centreon.com
 */
 
+#include "com/centreon/connector/perl/main_io.hh"
+#include <unistd.h>
 #include <cerrno>
-#include <cstdlib>
 #include <cstdio>
+#include <cstdlib>
 #include <cstring>
 #include <iostream>
 #include <sstream>
-#include <unistd.h>
 #include "com/centreon/connector/perl/embedded.hh"
-#include "com/centreon/connector/perl/main_io.hh"
 
 using namespace com::centreon::connector::perl;
 
 /**************************************
-*                                     *
-*           Private Methods           *
-*                                     *
-**************************************/
+ *                                     *
+ *           Private Methods           *
+ *                                     *
+ **************************************/
 
 /**
  *  Default constructor.
@@ -122,10 +122,10 @@ int main_io::_parse(std::string const& cmd) {
 }
 
 /**************************************
-*                                     *
-*           Public Methods            *
-*                                     *
-**************************************/
+ *                                     *
+ *           Public Methods            *
+ *                                     *
+ **************************************/
 
 /**
  *  Destructor.
@@ -220,4 +220,6 @@ void main_io::write(std::string const& data) {
  *
  *  @return true.
  */
-bool main_io::write_wanted() const { return (!_wbuffer.empty()); }
+bool main_io::write_wanted() const {
+  return (!_wbuffer.empty());
+}

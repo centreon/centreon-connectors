@@ -22,9 +22,9 @@
 #include <sstream>
 #include <string>
 #include "com/centreon/clib.hh"
+#include "com/centreon/exceptions/basic.hh"
 #include "com/centreon/io/file_stream.hh"
 #include "com/centreon/process.hh"
-#include "com/centreon/exceptions/basic.hh"
 #include "test/connector/misc.hh"
 #include "test/connector/paths.hh"
 
@@ -110,11 +110,10 @@ int main() {
         memcmp(output.c_str(), RESULT, sizeof(RESULT) - 1))
       throw(basic_error() << "invalid output: size=" << output.size()
                           << ", output=" << replace_null(output));
-  }
-  catch (std::exception const& e) {
+  } catch (std::exception const& e) {
     retval = 1;
     std::cerr << "error: " << e.what() << std::endl;
   }
 
-  return (retval);
+  return retval;
 }

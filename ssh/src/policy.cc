@@ -62,16 +62,14 @@ policy::~policy() noexcept {
     // Remove from multiplexer.
     multiplexer::instance().handle_manager::remove(&_sin);
     multiplexer::instance().handle_manager::remove(&_sout);
-  }
-  catch (...) {
+  } catch (...) {
   }
 
   // Close checks.
   for (auto& c : _checks) {
     try {
       c.second.first->unlisten(this);
-    }
-    catch (...) {
+    } catch (...) {
     }
     delete c.second.first;
   }
@@ -81,12 +79,10 @@ policy::~policy() noexcept {
   for (std::map<sessions::credentials, sessions::session*>::iterator
            it = _sessions.begin(),
            end = _sessions.end();
-       it != end;
-       ++it) {
+       it != end; ++it) {
     try {
       it->second->close();
-    }
-    catch (...) {
+    } catch (...) {
     }
     delete it->second;
   }
@@ -148,10 +144,10 @@ void policy::on_execute(uint64_t cmd_id,
                         bool use_ipv6) {
   try {
     // Log message.
-    log_info(logging::medium) << "got request to execute check " << cmd_id
-                              << " on session " << user << "@" << host
-                              << " (timeout " << timeout << ", first command \""
-                              << cmds.front() << "\")";
+    log_info(logging::medium)
+        << "got request to execute check " << cmd_id << " on session " << user
+        << "@" << host << " (timeout " << timeout << ", first command \""
+        << cmds.front() << "\")";
 
     // Credentials.
     sessions::credentials creds;
@@ -167,8 +163,8 @@ void policy::on_execute(uint64_t cmd_id,
     // Find session.
     auto it = _sessions.find(creds);
     if (it == _sessions.end()) {
-      log_info(logging::low) << "creating session for " << user << "@" << host
-                             << ":" << port;
+      log_info(logging::low)
+          << "creating session for " << user << "@" << host << ":" << port;
       std::unique_ptr<sessions::session> sess{new sessions::session(creds)};
       sess->connect(use_ipv6);
       _sessions[creds] = sess.get();
@@ -186,19 +182,17 @@ void policy::on_execute(uint64_t cmd_id,
     lock.unlock();
 
     chk_ptr->execute(*it->second, cmd_id, cmds, timeout);
-  }
-  catch (std::exception const& e) {
-    log_error(logging::low) << "could not launch check ID " << cmd_id
-                            << " on host " << host
-                            << " because an error occurred: " << e.what();
+  } catch (std::exception const& e) {
+    log_error(logging::low)
+        << "could not launch check ID " << cmd_id << " on host " << host
+        << " because an error occurred: " << e.what();
     checks::result r;
     r.set_command_id(cmd_id);
     on_result(r);
-  }
-  catch (...) {
-    log_error(logging::low) << "could not launch check ID " << cmd_id
-                            << " on host " << host
-                            << " because an error occurred";
+  } catch (...) {
+    log_error(logging::low)
+        << "could not launch check ID " << cmd_id << " on host " << host
+        << " because an error occurred";
     checks::result r;
     r.set_command_id(cmd_id);
     on_result(r);
@@ -235,8 +229,7 @@ void policy::on_result(checks::result const& r) {
     try {
       chk->second.first->unlisten(this);
       chk->second.second->unlisten(chk->second.first);
-    }
-    catch (...) {
+    } catch (...) {
     }
     delete chk->second.first;
     sessions::session* sess(chk->second.second);
@@ -253,8 +246,7 @@ void policy::on_result(checks::result const& r) {
                     std::pair<checks::check*, sessions::session*> >::iterator
                it = _checks.begin(),
                end = _checks.end();
-           it != end;
-           ++it)
+           it != end; ++it)
         if (it->second.second == sess) {
           found = true;
           break;
@@ -270,11 +262,11 @@ void policy::on_result(checks::result const& r) {
               << "session " << sess
               << " was not found in policy list, deleting anyway";
         else {
-          log_info(logging::high) << "session " << it->first.get_user() << "@"
-                                  << it->first.get_host() << ":"
-                                  << it->first.get_port()
-                                  << " that is not connected and has "
-                                     "no check running will be deleted";
+          log_info(logging::high)
+              << "session " << it->first.get_user() << "@"
+              << it->first.get_host() << ":" << it->first.get_port()
+              << " that is not connected and has "
+                 "no check running will be deleted";
           _sessions.erase(it);
         }
         delayed_delete<sessions::session>* dd =

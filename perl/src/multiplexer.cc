@@ -16,7 +16,6 @@
 ** For more information : contact@centreon.com
 */
 
-#include <cstdlib>
 #include "com/centreon/connector/perl/multiplexer.hh"
 
 using namespace com::centreon::connector::perl;
@@ -25,17 +24,17 @@ using namespace com::centreon::connector::perl;
 static multiplexer* _instance = NULL;
 
 /**************************************
-*                                     *
-*           Public Methods            *
-*                                     *
-**************************************/
+ *                                     *
+ *           Public Methods            *
+ *                                     *
+ **************************************/
 
 /**
  *  Get class instance.
  *
  *  @return multiplexer instance.
  */
-multiplexer& multiplexer::instance() throw() { return (*_instance); }
+multiplexer& multiplexer::instance() noexcept { return *_instance; }
 
 /**
  *  Load singleton.
@@ -43,7 +42,6 @@ multiplexer& multiplexer::instance() throw() { return (*_instance); }
 void multiplexer::load() {
   if (!_instance)
     _instance = new multiplexer;
-  return;
 }
 
 /**
@@ -52,14 +50,13 @@ void multiplexer::load() {
 void multiplexer::unload() {
   delete _instance;
   _instance = NULL;
-  return;
 }
 
 /**************************************
-*                                     *
-*           Private Methods           *
-*                                     *
-**************************************/
+ *                                     *
+ *           Private Methods           *
+ *                                     *
+ **************************************/
 
 /**
  *  Default constructor.

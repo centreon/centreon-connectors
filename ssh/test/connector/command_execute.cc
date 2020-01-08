@@ -69,11 +69,8 @@ int main() {
   p.exec(CONNECTOR_SSH_BINARY);
 
   // Write command.
-  std::ostringstream oss;
-  oss.write(CMD1, sizeof(CMD1) - 1);
-  std::string cmd(oss.str());
-  char const* ptr(cmd.c_str());
-  unsigned int size(cmd.size());
+  const char* ptr(CMD1);
+  size_t size(sizeof(CMD1) - 1);
   while (size > 0) {
     unsigned int rb(p.write(ptr, size));
     size -= rb;
@@ -83,7 +80,7 @@ int main() {
 
   // Read reply.
   std::string output;
-  while (true) {
+  for (;;) {
     std::string buffer;
     p.read(buffer);
     if (buffer.empty())
@@ -101,13 +98,12 @@ int main() {
 
   try {
     if (retval)
-      throw(basic_error() << "invalid return code: " << retval);
+      throw basic_error() << "invalid return code: " << retval;
     if (output.size() != (sizeof(RESULT) - 1) ||
         memcmp(output.c_str(), RESULT, sizeof(RESULT) - 1))
       throw(basic_error() << "invalid output: size=" << output.size()
                           << ", output=" << replace_null(output));
-  }
-  catch (std::exception const& e) {
+  } catch (std::exception const& e) {
     retval = 1;
     std::cerr << "error: " << e.what() << std::endl;
   }

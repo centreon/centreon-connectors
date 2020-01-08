@@ -41,7 +41,7 @@ class pipe_handle : public handle {
   pipe_handle& operator=(pipe_handle const& ph) = delete;
   void close() noexcept;
   static void close_all_handles();
-  native_handle get_native_handle() throw();
+  native_handle get_native_handle() noexcept;
   unsigned long read(void* data, unsigned long size);
   void set_fd(int fd);
   unsigned long write(void const* data, unsigned long size);

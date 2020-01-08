@@ -28,10 +28,10 @@ using namespace com::centreon;
 using namespace com::centreon::connector::ssh::sessions;
 
 /**************************************
-*                                     *
-*           Public Methods            *
-*                                     *
-**************************************/
+ *                                     *
+ *           Public Methods            *
+ *                                     *
+ **************************************/
 
 /**
  *  Default constructor.
@@ -54,7 +54,6 @@ void socket_handle::close() {
     ::close(_handl);
     _handl = native_handle_null;
   }
-  return;
 }
 
 /**
@@ -62,7 +61,9 @@ void socket_handle::close() {
  *
  *  @return Native socket handle.
  */
-native_handle socket_handle::get_native_handle() { return (_handl); }
+native_handle socket_handle::get_native_handle() {
+  return _handl;
+}
 
 /**
  *  Read from socket descriptor.
@@ -76,9 +77,9 @@ unsigned long socket_handle::read(void* data, unsigned long size) {
   ssize_t rb(::read(_handl, data, size));
   if (rb < 0) {
     char const* msg(strerror(errno));
-    throw(basic_error() << "socket read error: " << msg);
+    throw basic_error() << "socket read error: " << msg;
   }
-  return (rb);
+  return rb;
 }
 
 /**
@@ -89,7 +90,6 @@ unsigned long socket_handle::read(void* data, unsigned long size) {
 void socket_handle::set_native_handle(native_handle handl) {
   this->close();
   _handl = handl;
-  return;
 }
 
 /**
@@ -104,7 +104,7 @@ unsigned long socket_handle::write(void const* data, unsigned long size) {
   ssize_t wb(::write(_handl, data, size));
   if (wb < 0) {
     char const* msg(strerror(errno));
-    throw(basic_error() << "socket write error: " << msg);
+    throw basic_error() << "socket write error: " << msg;
   }
-  return (wb);
+  return wb;
 }

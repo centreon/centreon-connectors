@@ -78,19 +78,3 @@ void timeout::set_check(check* chk) throw() {
 void timeout::set_final(bool final) throw() {
   _final = final;
 }
-
-/**************************************
- *                                     *
- *           Private Methods           *
- *                                     *
- **************************************/
-
-/**
- *  Copy internal data members.
- *
- *  @param[in] t Object to copy.
- */
-void timeout::_internal_copy(timeout const& t) {
-  _check = t._check;
-  _final = t._final;
-}

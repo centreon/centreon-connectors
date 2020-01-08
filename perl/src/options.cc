@@ -16,8 +16,8 @@
 ** For more information : contact@centreon.com
 */
 
-#include <sstream>
 #include "com/centreon/connector/perl/options.hh"
+#include <sstream>
 
 using namespace com::centreon::connector::perl;
 
@@ -34,22 +34,26 @@ static char const* const log_file_description =
     "Specifies the log file (default: stderr).";
 
 /**************************************
-*                                     *
-*           Public Methods            *
-*                                     *
-**************************************/
+ *                                     *
+ *           Public Methods            *
+ *                                     *
+ **************************************/
 
 /**
  *  Default constructor.
  */
-options::options() { _init(); }
+options::options() {
+  _init();
+}
 
 /**
  *  Copy constructor.
  *
  *  @param[in] opts Object to copy.
  */
-options::options(options const& opts) : misc::get_options(opts) { _init(); }
+options::options(options const& opts) : misc::get_options(opts) {
+  _init();
+}
 
 /**
  *  Destructor.
@@ -99,19 +103,20 @@ std::string options::help() const {
  */
 void options::parse(int argc, char* argv[]) {
   _parse_arguments(argc, argv);
-  return;
 }
 
 /**
  *  Get the program usage.
  */
-std::string options::usage() const { return (help()); }
+std::string options::usage() const {
+  return (help());
+}
 
 /**************************************
-*                                     *
-*           Private Methods           *
-*                                     *
-**************************************/
+ *                                     *
+ *           Private Methods           *
+ *                                     *
+ **************************************/
 
 /**
  *  Init argument table.
@@ -158,6 +163,4 @@ void options::_init() {
     arg.set_description(log_file_description);
     arg.set_has_value(true);
   }
-
-  return;
 }

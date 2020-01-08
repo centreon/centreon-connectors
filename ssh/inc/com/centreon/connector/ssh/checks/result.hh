@@ -57,7 +57,7 @@ class result {
   int _exit_code;
   std::string _output;
 };
-}
+}  // namespace checks
 
 CCCS_END()
 
