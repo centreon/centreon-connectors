@@ -43,28 +43,19 @@ credentials::credentials() : _port(22) {}
  *  @param[in] key      Identity file.
  *  @param[in] port     Port.
  */
-credentials::credentials(
-               std::string const& host,
-               std::string const& user,
-               std::string const& password,
-               std::string const& key,
-               unsigned short port)
-  : _host(host),
-    _key(key),
-    _password(password),
-    _port(port),
-    _user(user) {
-
-}
+credentials::credentials(std::string const& host,
+                         std::string const& user,
+                         std::string const& password,
+                         std::string const& key,
+                         unsigned short port)
+    : _host(host), _key(key), _password(password), _port(port), _user(user) {}
 
 /**
  *  Copy constructor.
  *
  *  @param[in] c Object to copy.
  */
-credentials::credentials(credentials const& c) {
-  _copy(c);
-}
+credentials::credentials(credentials const& c) { _copy(c); }
 
 /**
  *  Destructor.
@@ -92,11 +83,8 @@ credentials& credentials::operator=(credentials const& c) {
  *  @return true if both objects are equal.
  */
 bool credentials::operator==(credentials const& c) const {
-  return ((_port == c._port)
-          && (_host == c._host)
-          && (_key == c._key)
-          && (_password == c._password)
-          && (_user == c._user));
+  return ((_port == c._port) && (_host == c._host) && (_key == c._key) &&
+          (_password == c._password) && (_user == c._user));
 }
 
 /**
@@ -140,45 +128,35 @@ bool credentials::operator<(credentials const& c) const {
  *
  *  @return Host.
  */
-std::string const& credentials::get_host() const {
-  return (_host);
-}
+std::string const& credentials::get_host() const { return (_host); }
 
 /**
  *  Get the key file.
  *
  *  @return Identity file.
  */
-std::string const& credentials::get_key() const {
-  return (_key);
-}
+std::string const& credentials::get_key() const { return (_key); }
 
 /**
  *  Get the password.
  *
  *  @return Password.
  */
-std::string const& credentials::get_password() const {
-  return (_password);
-}
+std::string const& credentials::get_password() const { return (_password); }
 
 /**
  *  Get the port.
  *
  *  @return Port.
  */
-unsigned short credentials::get_port() const {
-  return (_port);
-}
+unsigned short credentials::get_port() const { return (_port); }
 
 /**
  *  Get the user.
  *
  *  @return User.
  */
-std::string const& credentials::get_user() const {
-  return (_user);
-}
+std::string const& credentials::get_user() const { return (_user); }
 
 /**
  *  Set key file.
@@ -187,7 +165,7 @@ std::string const& credentials::get_user() const {
  */
 void credentials::set_key(std::string const& file) {
   _key = file;
-  return ;
+  return;
 }
 
 /**
@@ -197,7 +175,7 @@ void credentials::set_key(std::string const& file) {
  */
 void credentials::set_host(std::string const& host) {
   _host = host;
-  return ;
+  return;
 }
 
 /**
@@ -207,7 +185,7 @@ void credentials::set_host(std::string const& host) {
  */
 void credentials::set_password(std::string const& password) {
   _password = password;
-  return ;
+  return;
 }
 
 /**
@@ -217,7 +195,7 @@ void credentials::set_password(std::string const& password) {
  */
 void credentials::set_port(unsigned short port) {
   _port = port;
-  return ;
+  return;
 }
 
 /**
@@ -227,7 +205,7 @@ void credentials::set_port(unsigned short port) {
  */
 void credentials::set_user(std::string const& user) {
   _user = user;
-  return ;
+  return;
 }
 
 /**************************************
@@ -247,5 +225,5 @@ void credentials::_copy(credentials const& c) {
   _password = c._password;
   _port = c._port;
   _user = c._user;
-  return ;
+  return;
 }
