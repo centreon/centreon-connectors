@@ -33,16 +33,14 @@ static multiplexer* _instance = NULL;
 /**
  *  Destructor.
  */
-multiplexer::~multiplexer() throw () {}
+multiplexer::~multiplexer() throw() {}
 
 /**
  *  Get class instance.
  *
  *  @return multiplexer instance.
  */
-multiplexer& multiplexer::instance() throw () {
-  return (*_instance);
-}
+multiplexer& multiplexer::instance() throw() { return (*_instance); }
 
 /**
  *  Load singleton.
@@ -50,7 +48,7 @@ multiplexer& multiplexer::instance() throw () {
 void multiplexer::load() {
   if (!_instance)
     _instance = new multiplexer;
-  return ;
+  return;
 }
 
 /**
@@ -59,7 +57,7 @@ void multiplexer::load() {
 void multiplexer::unload() {
   delete _instance;
   _instance = NULL;
-  return ;
+  return;
 }
 
 /**************************************
@@ -71,5 +69,4 @@ void multiplexer::unload() {
 /**
  *  Default constructor.
  */
-multiplexer::multiplexer()
-  : com::centreon::handle_manager(this) {}
+multiplexer::multiplexer() : com::centreon::handle_manager(this) {}
