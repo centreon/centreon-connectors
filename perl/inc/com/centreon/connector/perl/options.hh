@@ -31,17 +31,16 @@ CCCP_BEGIN()
  *  Parse and expose command line arguments.
  */
 class options : public com::centreon::misc::get_options {
+
+  void _init();
  public:
   options();
-  options(options const& opts);
-  ~options() throw();
-  options& operator=(options const& opts);
+  ~options() noexcept;
+  options(options const& opts) = delete;
+  options& operator=(options const& opts) = delete;
   std::string help() const;
   void parse(int argc, char* argv[]);
   std::string usage() const;
-
- private:
-  void _init();
 };
 
 CCCP_END()

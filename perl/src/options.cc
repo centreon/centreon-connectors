@@ -47,31 +47,9 @@ options::options() {
 }
 
 /**
- *  Copy constructor.
- *
- *  @param[in] opts Object to copy.
- */
-options::options(options const& opts) : misc::get_options(opts) {
-  _init();
-}
-
-/**
  *  Destructor.
  */
-options::~options() throw() {}
-
-/**
- *  Assignment operator.
- *
- *  @param[in] opts Object to copy.
- *
- *  @return This object.
- */
-options& options::operator=(options const& opts) {
-  if (this != &opts)
-    misc::get_options::operator=(opts);
-  return (*this);
-}
+options::~options() noexcept {}
 
 /**
  *  Get the help.
@@ -83,16 +61,7 @@ std::string options::help() const {
       << "  --help     " << help_description << "\n"
       << "  --version  " << version_description << "\n"
       << "  --code     " << code_description << "\n";
-  // << "\n"
-  // << "Commands must be sent on the connector's standard input.\n"
-  // << "They must be sent using Centreon Connector protocol version\n"
-  // << "1.0 and formatted as such:\n"
-  // << "\n"
-  // << "  <host> <user> <password> <command> [arg1] [arg2]\n"
-  // << "Check results will be sent back using also the Centreon\n"
-  // << "Connector protocol version 1.0, on the process' standard\n"
-  // << "output.";
-  return (oss.str());
+  return oss.str();
 }
 
 /**
@@ -109,7 +78,7 @@ void options::parse(int argc, char* argv[]) {
  *  Get the program usage.
  */
 std::string options::usage() const {
-  return (help());
+  return help();
 }
 
 /**************************************
