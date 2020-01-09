@@ -42,9 +42,7 @@ parser::parser() : _listnr(NULL) {}
  *
  *  @param[in] p Object to copy.
  */
-parser::parser(parser const& p) : handle_listener(p) {
-  _copy(p);
-}
+parser::parser(parser const& p) : handle_listener(p) { _copy(p); }
 
 /**
  *  Destructor.
@@ -82,27 +80,21 @@ void parser::error(handle& h) {
  *
  *  @return Unparsed buffer.
  */
-std::string const& parser::get_buffer() const noexcept {
-  return _buffer;
-}
+std::string const& parser::get_buffer() const noexcept { return _buffer; }
 
 /**
  *  Get associated listener.
  *
  *  @return Listener if object has one, NULL otherwise.
  */
-listener* parser::get_listener() const noexcept {
-  return _listnr;
-}
+listener* parser::get_listener() const noexcept { return _listnr; }
 
 /**
  *  Change the listener.
  *
  *  @param[in] l Listener.
  */
-void parser::listen(listener* l) noexcept {
-  _listnr = l;
-}
+void parser::listen(listener* l) noexcept { _listnr = l; }
 
 /**
  *  Read data from handle.
@@ -114,8 +106,7 @@ void parser::read(handle& h) {
   log_debug(logging::medium) << "reading data for parsing";
   char buffer[4096];
   unsigned long rb(h.read(buffer, sizeof(buffer)));
-  log_debug(logging::medium) << "read "
-    << rb << " bytes from handle";
+  log_debug(logging::medium) << "read " << rb << " bytes from handle";
 
   // stdin's eof is reached.
   if (!rb) {
@@ -134,8 +125,7 @@ void parser::read(handle& h) {
 
     // Parse command.
     while (bound != std::string::npos) {
-      log_debug(logging::high)
-        << "got command boundary at offset " << bound;
+      log_debug(logging::high) << "got command boundary at offset " << bound;
       bound += sizeof(boundary);
       std::string cmd(_buffer.substr(0, bound));
       _buffer.erase(0, bound);
@@ -214,11 +204,11 @@ void parser::_parse(std::string const& cmd) {
 
   // Process each command as necessary.
   switch (id) {
-  case 0: // Version query.
-    if (_listnr)
-      _listnr->on_version();
-    break ;
-  case 2: // Execute query.
+    case 0:  // Version query.
+      if (_listnr)
+        _listnr->on_version();
+      break;
+    case 2:  // Execute query.
     {
       // Note: no need to check npos because cmd is
       //       terminated with at least 4 \0.
@@ -228,79 +218,74 @@ void parser::_parse(std::string const& cmd) {
       char* ptr(NULL);
       unsigned long long cmd_id(strtoull(cmd.c_str() + pos, &ptr, 10));
       if (!cmd_id || *ptr)
-        throw (basic_error() << "invalid execution request received:" \
-               " bad command ID (" << cmd.c_str() + pos << ")");
+        throw(basic_error() << "invalid execution request received:"
+                               " bad command ID (" << cmd.c_str() + pos << ")");
       pos = end + 1;
       // Find timeout value.
       end = cmd.find('\0', pos);
-      time_t timeout(static_cast<time_t>(strtoull(
-        cmd.c_str() + pos,
-        &ptr,
-        10)));
+      time_t timeout(
+          static_cast<time_t>(strtoull(cmd.c_str() + pos, &ptr, 10)));
       if (*ptr)
-        throw (basic_error() << "invalid execution request received:" \
-               " bad timeout (" << cmd.c_str() + pos << ")");
+        throw(basic_error() << "invalid execution request received:"
+                               " bad timeout (" << cmd.c_str() + pos << ")");
       timeout += time(NULL);
       pos = end + 1;
       // Find start time.
       end = cmd.find('\0', pos);
-      time_t start_time(static_cast<time_t>(strtoull(
-        cmd.c_str() + pos,
-        &ptr,
-        10)));
+      time_t start_time(
+          static_cast<time_t>(strtoull(cmd.c_str() + pos, &ptr, 10)));
       if (*ptr || !start_time)
-        throw (basic_error() << "invalid execution request received:" \
-               " bad start time (" << cmd.c_str() + pos << ")");
+        throw(basic_error() << "invalid execution request received:"
+                               " bad start time (" << cmd.c_str() + pos << ")");
       pos = end + 1;
       // Find command to execute.
       end = cmd.find('\0', pos);
       std::string cmdline(cmd.substr(pos, end - pos));
       if (cmdline.empty())
-        throw (basic_error() << "invalid execution request received:" \
-               " bad command line (" << cmd.c_str() + pos << ")");
+        throw(basic_error() << "invalid execution request received:"
+                               " bad command line (" << cmd.c_str() + pos
+                            << ")");
       options opt;
       try {
         opt.parse(cmdline);
         if (opt.get_commands().empty())
-          throw (basic_error() << "invalid execution request " \
-                    "received: bad command line (" << cmd.c_str() + pos
-                 << ")");
+          throw(basic_error() << "invalid execution request "
+                                 "received: bad command line ("
+                              << cmd.c_str() + pos << ")");
 
-        if (opt.get_timeout()
-            && opt.get_timeout() < static_cast<unsigned int>(timeout))
+        if (opt.get_timeout() &&
+            opt.get_timeout() < static_cast<unsigned int>(timeout))
           timeout = time(NULL) + opt.get_timeout();
         else if (opt.get_timeout() > static_cast<unsigned int>(timeout))
-          throw (basic_error() << "invalid execution request " \
-                 "received: timeout > to monitoring engine timeout");
+          throw(basic_error()
+                << "invalid execution request "
+                   "received: timeout > to monitoring engine timeout");
       }
       catch (std::exception const& e) {
         if (_listnr)
           _listnr->on_error(cmd_id, e.what());
-        return ;
+        return;
       }
 
       // Notify listener.
       if (_listnr)
-        _listnr->on_execute(
-          cmd_id,
-          timeout,
-          opt.get_host(),
-          opt.get_port(),
-          opt.get_user(),
-          opt.get_authentication(),
-          opt.get_identity_file(),
-          opt.get_commands(),
-          opt.skip_stdout(),
-          opt.skip_stderr(),
-          (opt.get_ip_protocol() == options::ip_v6));
-    }
-    break ;
-  case 4: // Quit query.
-    if (_listnr)
-      _listnr->on_quit();
-    break ;
-  default:
-    throw (basic_error() << "invalid command received (ID "
-             << id << ")");
+        _listnr->on_execute(cmd_id,
+                            timeout,
+                            opt.get_host(),
+                            opt.get_port(),
+                            opt.get_user(),
+                            opt.get_authentication(),
+                            opt.get_identity_file(),
+                            opt.get_commands(),
+                            opt.skip_stdout(),
+                            opt.skip_stderr(),
+                            (opt.get_ip_protocol() == options::ip_v6));
+    } break;
+    case 4:  // Quit query.
+      if (_listnr)
+        _listnr->on_quit();
+      break;
+    default:
+      throw(basic_error() << "invalid command received (ID " << id << ")");
   };
 }
