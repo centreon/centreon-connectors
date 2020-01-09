@@ -23,14 +23,13 @@
 using namespace com::centreon::connector::ssh;
 
 // Options descriptions.
-static char const* const debug_description
-  = "If this flag is specified, print all logs messages.";
-static char const* const help_description
-  = "Print help and exit.";
-static char const* const version_description
-  = "Print software version and exit.";
-static char const* const log_file_description
-  = "Specifies the log file (default: stderr).";
+static char const* const debug_description =
+    "If this flag is specified, print all logs messages.";
+static char const* const help_description = "Print help and exit.";
+static char const* const version_description =
+    "Print software version and exit.";
+static char const* const log_file_description =
+    "Specifies the log file (default: stderr).";
 
 /**************************************
 *                                     *
@@ -41,23 +40,19 @@ static char const* const log_file_description
 /**
  *  Default constructor.
  */
-options::options() {
-  _init();
-}
+options::options() { _init(); }
 
 /**
  *  Copy constructor.
  *
  *  @param[in] opts Object to copy.
  */
-options::options(options const& opts) : misc::get_options(opts) {
-  _init();
-}
+options::options(options const& opts) : misc::get_options(opts) { _init(); }
 
 /**
  *  Destructor.
  */
-options::~options() throw () {}
+options::~options() throw() {}
 
 /**
  *  Assignment operator.
@@ -67,7 +62,7 @@ options::~options() throw () {}
  *  @return This object.
  */
 options& options::operator=(options const& opts) {
-  if (this != & opts)
+  if (this != &opts)
     misc::get_options::operator=(opts);
   return *this;
 }
@@ -86,8 +81,7 @@ std::string options::help() const {
       << "Commands must be sent on the connector's standard input.\n"
       << "They must be sent using Centreon Connector protocol version\n"
       << "1.0 and support the following options:\n"
-      << "\n"
-      << orders::options::help() << "\n"
+      << "\n" << orders::options::help() << "\n"
       << "Check results will be sent back using also the Centreon\n"
       << "Connector protocol version 1.0, on the process' standard\n"
       << "output.";
@@ -100,16 +94,12 @@ std::string options::help() const {
  *  @param[in] argc Arguments count.
  *  @param[in] argv Arguments values.
  */
-void options::parse(int argc, char* argv[]) {
-  _parse_arguments(argc, argv);
-}
+void options::parse(int argc, char* argv[]) { _parse_arguments(argc, argv); }
 
 /**
  *  Get the program usage.
  */
-std::string options::usage() const {
-  return help();
-}
+std::string options::usage() const { return help(); }
 
 /**************************************
 *                                     *

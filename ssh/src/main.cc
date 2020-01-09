@@ -87,7 +87,8 @@ int main(int argc, char* argv[]) {
     options opts;
     try {
       opts.parse(argc - 1, argv + 1);
-    } catch (exceptions::basic const& e) {
+    }
+    catch (exceptions::basic const& e) {
       std::cout << e.what() << std::endl << opts.usage() << std::endl;
       return (EXIT_FAILURE);
     }
@@ -139,8 +140,8 @@ int main(int argc, char* argv[]) {
         if (!version)
           throw(basic_error() << "libssh2 version is too old (>= "
                               << LIBSSH2_VERSION << " required)");
-        log_info(logging::low)
-            << "libssh2 version " << version << " successfully loaded";
+        log_info(logging::low) << "libssh2 version " << version
+                               << " successfully loaded";
       }
 #endif /* libssh2 version >= 1.2.5 */
 
@@ -152,7 +153,8 @@ int main(int argc, char* argv[]) {
       policy p;
       retval = (p.run() ? EXIT_SUCCESS : EXIT_FAILURE);
     }
-  } catch (std::exception const& e) {
+  }
+  catch (std::exception const& e) {
     log_error(logging::low) << e.what();
   }
 

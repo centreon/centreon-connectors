@@ -40,9 +40,7 @@ multiplexer::~multiplexer() noexcept {}
  *
  *  @return multiplexer instance.
  */
-multiplexer& multiplexer::instance() noexcept {
-  return *_instance;
-}
+multiplexer& multiplexer::instance() noexcept { return *_instance; }
 
 /**
  *  Load singleton.
