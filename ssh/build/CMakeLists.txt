@@ -584,19 +584,18 @@ if (WITH_TESTING)
   target_link_libraries("${TEST_NAME}" ${CLIB_LIBRARIES})
   add_test("${TEST_NAME}" "${TEST_NAME}")
 
-# FIXME DBR: those tests fail
-#  # Execute command.
-#  set(TEST_NAME "connector_command_execute")
-#  add_executable("${TEST_NAME}"
-#    "${TEST_DIR}/connector/command_execute.cc")
-#  target_link_libraries("${TEST_NAME}" ${TEST_LIBRARIES})
-#  add_test("${TEST_NAME}" "${TEST_NAME}")
-#  # Execute command with a log file
-#  set(TEST_NAME "connector_command_execute_log_file")
-#  add_executable("${TEST_NAME}"
-#    "${TEST_DIR}/connector/command_execute_log_file.cc")
-#  target_link_libraries("${TEST_NAME}" ${TEST_LIBRARIES})
-#  add_test("${TEST_NAME}" "${TEST_NAME}")
+  # Execute command.
+  set(TEST_NAME "connector_command_execute")
+  add_executable("${TEST_NAME}"
+    "${TEST_DIR}/connector/command_execute.cc")
+  target_link_libraries("${TEST_NAME}" ${TEST_LIBRARIES})
+  add_test("${TEST_NAME}" "${TEST_NAME}")
+  # Execute command with a log file
+  set(TEST_NAME "connector_command_execute_log_file")
+  add_executable("${TEST_NAME}"
+    "${TEST_DIR}/connector/command_execute_log_file.cc")
+  target_link_libraries("${TEST_NAME}" ${TEST_LIBRARIES})
+  add_test("${TEST_NAME}" "${TEST_NAME}")
   # Non-existent host.
   set(TEST_NAME "connector_non_existent_host")
   add_executable("${TEST_NAME}"
