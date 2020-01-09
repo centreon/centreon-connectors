@@ -31,9 +31,6 @@ using namespace com::centreon::connector::ssh::orders;
  *  @return 0 on success.
  */
 int main() {
-  // Initialization.
-  com::centreon::logging::engine::load();
-
   // Data.
   buffer_handle bh;
   bh.write(DATA, sizeof(DATA));
@@ -50,13 +47,10 @@ int main() {
   parser p2(p1);
 
   // Check.
-  int retval ((p1.get_buffer() != std::string(DATA, sizeof(DATA)))
-              || (p1.get_listener() != &fl)
-              || (p2.get_buffer() != std::string(DATA, sizeof(DATA)))
-              || (p2.get_listener() != &fl));
-
-  // Unload.
-  com::centreon::logging::engine::unload();
+  int retval((p1.get_buffer() != std::string(DATA, sizeof(DATA))) ||
+             (p1.get_listener() != &fl) ||
+             (p2.get_buffer() != std::string(DATA, sizeof(DATA))) ||
+             (p2.get_listener() != &fl));
 
   return (retval);
 }

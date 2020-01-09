@@ -17,7 +17,6 @@
 */
 
 #include "com/centreon/connector/ssh/orders/parser.hh"
-#include "com/centreon/logging/engine.hh"
 #include "test/orders/buffer_handle.hh"
 #include "test/orders/fake_listener.hh"
 
@@ -32,9 +31,6 @@ using namespace com::centreon::connector::ssh::orders;
  *  @return 0 on success.
  */
 int main() {
-  // Initialization.
-  com::centreon::logging::engine::load();
-
   // Data.
   buffer_handle bh1;
   bh1.write(DATA1, sizeof(DATA1));
@@ -59,13 +55,10 @@ int main() {
   p2 = p1;
 
   // Check.
-  int retval ((p1.get_buffer() != std::string(DATA1, sizeof(DATA1)))
-              || (p1.get_listener() != &fl1)
-              || (p2.get_buffer() != std::string(DATA1, sizeof(DATA1)))
-              || (p2.get_listener() != &fl1));
-
-  // Unload.
-  com::centreon::logging::engine::unload();
+  int retval((p1.get_buffer() != std::string(DATA1, sizeof(DATA1))) ||
+             (p1.get_listener() != &fl1) ||
+             (p2.get_buffer() != std::string(DATA1, sizeof(DATA1))) ||
+             (p2.get_listener() != &fl1));
 
   return (retval);
 }

@@ -38,7 +38,7 @@ buffer_handle::buffer_handle(buffer_handle const& bh) : handle(bh) {
 /**
  *  Destructor.
  */
-buffer_handle::~buffer_handle() throw () {}
+buffer_handle::~buffer_handle() throw() {}
 
 /**
  *  Assignment operator.
@@ -60,7 +60,7 @@ buffer_handle& buffer_handle::operator=(buffer_handle const& bh) {
  */
 void buffer_handle::close() {
   _buffer.clear();
-  return ;
+  return;
 }
 
 /**
@@ -68,9 +68,7 @@ void buffer_handle::close() {
  *
  *  @return true if buffer is empty.
  */
-bool buffer_handle::empty() const {
-  return (_buffer.empty());
-}
+bool buffer_handle::empty() const { return (_buffer.empty()); }
 
 /**
  *  Get the native handle.
@@ -111,9 +109,7 @@ unsigned long buffer_handle::read(void* data, unsigned long size) {
  *
  *  @return size.
  */
-unsigned long buffer_handle::write(
-                               void const* data,
-                               unsigned long size) {
+unsigned long buffer_handle::write(void const* data, unsigned long size) {
   _buffer.append(static_cast<char const*>(data), size);
   return (size);
 }
@@ -131,5 +127,5 @@ unsigned long buffer_handle::write(
  */
 void buffer_handle::_copy(buffer_handle const& bh) {
   _buffer = bh._buffer;
-  return ;
+  return;
 }
