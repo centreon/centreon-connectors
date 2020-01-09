@@ -77,7 +77,8 @@ check::~check() throw() {
       // Free channel.
       libssh2_channel_free(_channel);
     }
-  } catch (...) {
+  }
+  catch (...) {
   }
 }
 
@@ -119,8 +120,8 @@ void check::execute(sessions::session& sess,
  *  @param[in] listnr Listener.
  */
 void check::listen(checks::listener* listnr) {
-  log_debug(logging::medium)
-      << "check " << this << " is listened by " << listnr;
+  log_debug(logging::medium) << "check " << this << " is listened by "
+                             << listnr;
   _listnr = listnr;
 }
 
@@ -133,11 +134,11 @@ void check::on_available(sessions::session& sess) {
   try {
     switch (_step) {
       case chan_open:
-        log_info(logging::high)
-            << "attempting to open channel for check " << _cmd_id;
+        log_info(logging::high) << "attempting to open channel for check "
+                                << _cmd_id;
         if (!_open()) {
-          log_info(logging::high)
-              << "check " << _cmd_id << " channel was successfully opened";
+          log_info(logging::high) << "check " << _cmd_id
+                                  << " channel was successfully opened";
           _step = chan_exec;
           on_available(sess);
         }
@@ -145,47 +146,50 @@ void check::on_available(sessions::session& sess) {
       case chan_exec:
         log_info(logging::high) << "attempting to execute check " << _cmd_id;
         if (!_exec()) {
-          log_info(logging::high)
-              << "check " << _cmd_id << " was successfully executed";
+          log_info(logging::high) << "check " << _cmd_id
+                                  << " was successfully executed";
           _step = chan_read;
           on_available(sess);
         }
         break;
       case chan_read:
-        log_info(logging::high)
-            << "reading check " << _cmd_id << " result from channel";
+        log_info(logging::high) << "reading check " << _cmd_id
+                                << " result from channel";
         if (!_read()) {
-          log_info(logging::high)
-              << "result of check " << _cmd_id << " was successfully fetched";
+          log_info(logging::high) << "result of check " << _cmd_id
+                                  << " was successfully fetched";
           _step = chan_close;
           on_available(sess);
         }
         break;
       case chan_close: {
         unsigned long long cmd_id(_cmd_id);
-        log_info(logging::high)
-            << "attempting to close check " << cmd_id << " channel";
+        log_info(logging::high) << "attempting to close check " << cmd_id
+                                << " channel";
         if (!_close()) {
-          log_info(logging::medium)
-              << "channel of check " << cmd_id << " successfully closed";
+          log_info(logging::medium) << "channel of check " << cmd_id
+                                    << " successfully closed";
         }
       } break;
       default:
         throw(basic_error() << "channel requested to run at invalid step");
     }
-  } catch (std::exception const& e) {
-    log_error(logging::low)
-        << "error occured while executing check " << _cmd_id << " on session "
-        << sess.get_credentials().get_user() << "@"
-        << sess.get_credentials().get_host() << ": " << e.what();
+  }
+  catch (std::exception const& e) {
+    log_error(logging::low) << "error occured while executing check " << _cmd_id
+                            << " on session "
+                            << sess.get_credentials().get_user() << "@"
+                            << sess.get_credentials().get_host() << ": "
+                            << e.what();
     result r;
     r.set_command_id(_cmd_id);
     _send_result_and_unregister(r);
-  } catch (...) {
-    log_error(logging::low)
-        << "unknown error occured while executing check " << _cmd_id
-        << " on session " << sess.get_credentials().get_user() << "@"
-        << sess.get_credentials().get_host();
+  }
+  catch (...) {
+    log_error(logging::low) << "unknown error occured while executing check "
+                            << _cmd_id << " on session "
+                            << sess.get_credentials().get_user() << "@"
+                            << sess.get_credentials().get_host();
     result r;
     r.set_command_id(_cmd_id);
     _send_result_and_unregister(r);
@@ -237,8 +241,8 @@ void check::on_timeout() {
  *  @param[in] listnr Listener.
  */
 void check::unlisten(checks::listener* listnr) {
-  log_debug(logging::medium)
-      << "listener " << listnr << " stops listening check " << this;
+  log_debug(logging::medium) << "listener " << listnr
+                             << " stops listening check " << this;
   _listnr = nullptr;
 }
 
@@ -263,8 +267,8 @@ bool check::_close() {
     if (ret) {
       if (ret != LIBSSH2_ERROR_EAGAIN) {
         char* msg;
-        libssh2_session_last_error(_session->get_libssh2_session(), &msg,
-                                   nullptr, 0);
+        libssh2_session_last_error(
+            _session->get_libssh2_session(), &msg, nullptr, 0);
         if (ret == LIBSSH2_ERROR_SOCKET_SEND)
           _session->error();
         throw(basic_error() << "could not close channel: " << msg);
@@ -323,8 +327,8 @@ bool check::_exec() {
   // Check that we can try again later.
   if (ret && (ret != LIBSSH2_ERROR_EAGAIN)) {
     char* msg;
-    libssh2_session_last_error(_session->get_libssh2_session(), &msg, nullptr,
-                               0);
+    libssh2_session_last_error(
+        _session->get_libssh2_session(), &msg, nullptr, 0);
     if (ret == LIBSSH2_ERROR_SOCKET_SEND)
       _session->error();
     throw(basic_error() << "could not execute command on SSH channel: " << msg
@@ -367,8 +371,8 @@ bool check::_read() {
     // Only throw is error is fatal.
     if (orb != LIBSSH2_ERROR_EAGAIN) {
       char* msg;
-      libssh2_session_last_error(_session->get_libssh2_session(), &msg, nullptr,
-                                 0);
+      libssh2_session_last_error(
+          _session->get_libssh2_session(), &msg, nullptr, 0);
       if (orb == LIBSSH2_ERROR_SOCKET_SEND)
         _session->error();
       throw(basic_error() << "failed to read command output: " << msg);
@@ -399,7 +403,8 @@ void check::_send_result_and_unregister(result const& r) {
   if (_timeout) {
     try {
       multiplexer::instance().com::centreon::task_manager::remove(_timeout);
-    } catch (...) {
+    }
+    catch (...) {
     }
     _timeout = 0;
   }
@@ -407,8 +412,8 @@ void check::_send_result_and_unregister(result const& r) {
   // Check that session is valid.
   if (_session) {
     // Unregister from session.
-    log_debug(logging::high)
-        << "check " << this << " is unregistering from session " << _session;
+    log_debug(logging::high) << "check " << this
+                             << " is unregistering from session " << _session;
 
     // Unregister from session.
     _session->unlisten(this);

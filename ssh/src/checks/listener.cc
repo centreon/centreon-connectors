@@ -36,9 +36,7 @@ listener::listener() {}
  *
  *  @param[in] l Unused.
  */
-listener::listener(listener const& l) {
-  (void)l;
-}
+listener::listener(listener const& l) { (void)l; }
 
 /**
  *  Destructor.

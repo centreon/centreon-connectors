@@ -39,14 +39,14 @@ timeout::timeout(check* chk) : _check(chk) {}
  *
  *  @param[in] t Object to copy.
  */
-//timeout::timeout(timeout const& t) : com::centreon::task(t) {
+// timeout::timeout(timeout const& t) : com::centreon::task(t) {
 //  _internal_copy(t);
 //}
 
 /**
  *  Destructor.
  */
-timeout::~timeout() throw () {}
+timeout::~timeout() throw() {}
 
 /**
  *  Assignment operator.
@@ -55,7 +55,7 @@ timeout::~timeout() throw () {}
  *
  *  @return This object.
  */
-//timeout& timeout::operator=(timeout const& t) {
+// timeout& timeout::operator=(timeout const& t) {
 //  if (this != &t) {
 //    com::centreon::task::operator=(t);
 //    _internal_copy(t);
@@ -68,9 +68,7 @@ timeout::~timeout() throw () {}
  *
  *  @return Check object.
  */
-check* timeout::get_check() const throw () {
-  return (_check);
-}
+check* timeout::get_check() const throw() { return (_check); }
 
 /**
  *  Notify check of timeout.
@@ -78,7 +76,7 @@ check* timeout::get_check() const throw () {
 void timeout::run() {
   if (_check)
     _check->on_timeout();
-  return ;
+  return;
 }
 
 /**
@@ -86,9 +84,9 @@ void timeout::run() {
  *
  *  @param[in] chk Target check.
  */
-void timeout::set_check(check* chk) throw () {
+void timeout::set_check(check* chk) throw() {
   _check = chk;
-  return ;
+  return;
 }
 
 /**************************************
@@ -104,5 +102,5 @@ void timeout::set_check(check* chk) throw () {
  */
 void timeout::_internal_copy(timeout const& t) {
   _check = t._check;
-  return ;
+  return;
 }
