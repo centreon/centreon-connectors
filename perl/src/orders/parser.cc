@@ -34,36 +34,12 @@ using namespace com::centreon::connector::perl::orders;
 /**
  *  Default constructor.
  */
-parser::parser() : _listnr(NULL) {}
-
-/**
- *  Copy constructor.
- *
- *  @param[in] p Object to copy.
- */
-parser::parser(parser const& p) : handle_listener(p) {
-  _copy(p);
-}
+parser::parser() : _listnr(nullptr) {}
 
 /**
  *  Destructor.
  */
-parser::~parser() throw() {}
-
-/**
- *  Assignment operator.
- *
- *  @param[in] p Object to copy.
- *
- *  @return This object.
- */
-parser& parser::operator=(parser const& p) {
-  if (this != &p) {
-    handle_listener::operator=(p);
-    _copy(p);
-  }
-  return (*this);
-}
+parser::~parser() noexcept {}
 
 /**
  *  Got error event on handle.
@@ -81,8 +57,8 @@ void parser::error(handle& h) {
  *
  *  @return Unparsed buffer.
  */
-std::string const& parser::get_buffer() const throw() {
-  return (_buffer);
+std::string const& parser::get_buffer() const noexcept {
+  return _buffer;
 }
 
 /**
@@ -90,8 +66,8 @@ std::string const& parser::get_buffer() const throw() {
  *
  *  @return Listener if object has one, NULL otherwise.
  */
-listener* parser::get_listener() const throw() {
-  return (_listnr);
+listener* parser::get_listener() const noexcept {
+  return _listnr;
 }
 
 /**
@@ -99,7 +75,7 @@ listener* parser::get_listener() const throw() {
  *
  *  @param[in] l Listener.
  */
-void parser::listen(listener* l) throw() {
+void parser::listen(listener* l) noexcept {
   _listnr = l;
 }
 
@@ -160,7 +136,7 @@ void parser::read(handle& h) {
  */
 bool parser::want_read(handle& h) {
   (void)h;
-  return (true);
+  return true;
 }
 
 /**
@@ -170,7 +146,7 @@ bool parser::want_read(handle& h) {
  */
 bool parser::want_write(handle& h) {
   (void)h;
-  return (false);
+  return false;
 }
 
 /**************************************
@@ -178,16 +154,6 @@ bool parser::want_write(handle& h) {
  *           Private Methods           *
  *                                     *
  **************************************/
-
-/**
- *  Copy internal data members.
- *
- *  @param[in] p Object to copy.
- */
-void parser::_copy(parser const& p) {
-  _buffer = p._buffer;
-  _listnr = p._listnr;
-}
 
 /**
  *  @brief Parse a command.
