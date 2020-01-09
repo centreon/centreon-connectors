@@ -80,7 +80,6 @@ int main(int argc, char* argv[]) {
 
   try {
     // Initializations.
-    logging::engine::load();
     multiplexer::load();
 
     // Command line parsing.
@@ -165,7 +164,6 @@ int main(int argc, char* argv[]) {
 
   // Deinitializations.
   multiplexer::unload();
-  logging::engine::unload();
   if (log_file)
     delete log_file;
 
