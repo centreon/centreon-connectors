@@ -40,7 +40,6 @@ using namespace com::centreon::connector::perl;
  */
 int main(int argc, char* argv[], char* env[]) {
   // Initialization.
-  logging::engine::load();
   pipe_handle::load();
   embedded_perl::load(&argc, &argv, &env);
 
@@ -86,7 +85,6 @@ int main(int argc, char* argv[], char* env[]) {
   // Unload.
   embedded_perl::unload();
   pipe_handle::unload();
-  logging::engine::unload();
 
   return (retval);
 }

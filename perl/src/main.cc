@@ -19,7 +19,6 @@
 #include <csignal>
 #include <cstdlib>
 #include <iostream>
-#include "com/centreon/clib.hh"
 #include "com/centreon/connector/perl/embedded_perl.hh"
 #include "com/centreon/connector/perl/multiplexer.hh"
 #include "com/centreon/connector/perl/options.hh"
@@ -72,7 +71,6 @@ int main(int argc, char** argv, char** env) {
 
   try {
     // Initializations.
-    clib::load(clib::with_logging_engine);
     pipe_handle::load();
     multiplexer::load();
 
@@ -85,7 +83,6 @@ int main(int argc, char** argv, char** env) {
       std::cout << e.what() << std::endl << opts.usage() << std::endl;
       multiplexer::unload();
       pipe_handle::unload();
-      clib::unload();
       return (EXIT_FAILURE);
     }
     if (opts.get_argument("help").get_is_set()) {
@@ -141,9 +138,8 @@ int main(int argc, char** argv, char** env) {
   embedded_perl::unload();
   multiplexer::unload();
   pipe_handle::unload();
-  clib::unload();
   if (log_file)
     delete log_file;
 
-  return (retval);
+  return retval;
 }

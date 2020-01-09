@@ -40,7 +40,6 @@ using namespace com::centreon::connector::perl;
  */
 int main(int argc, char* argv[], char* env[]) {
   // Initialization.
-  logging::engine::load();
   pipe_handle::load();
   embedded_perl::load(&argc, &argv, &env);
 
@@ -53,10 +52,10 @@ int main(int argc, char* argv[], char* env[]) {
     com::centreon::io::file_stream fs;
     fs.open(script_path.c_str(), "w");
     char const* data(
-      "my $x;\n"
-      "my $y = 40;\n"
-      "$x = 2;\n"
-      "exit $x + $y;\n");
+        "my $x;\n"
+        "my $y = 40;\n"
+        "$x = 2;\n"
+        "exit $x + $y;\n");
     unsigned int size(strlen(data));
     unsigned int rb(1);
     do {
@@ -90,7 +89,6 @@ int main(int argc, char* argv[], char* env[]) {
   // Unload.
   embedded_perl::unload();
   pipe_handle::unload();
-  logging::engine::unload();
 
   return (retval);
 }
