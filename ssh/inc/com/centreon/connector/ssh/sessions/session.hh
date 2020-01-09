@@ -41,6 +41,8 @@ class session : public com::centreon::handle_listener {
  public:
   session(credentials const& creds);
   ~session() noexcept;
+  session(session const& s) = delete;
+  session& operator=(session const& s) = delete;
   void close();
   void connect(bool use_ipv6 = false);
   void error();
@@ -66,8 +68,6 @@ class session : public com::centreon::handle_listener {
     session_error
   };
 
-  session(session const& s);
-  session& operator=(session const& s);
   void _available();
   void _key();
   void _passwd();
