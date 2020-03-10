@@ -77,7 +77,6 @@ void fake_listener::on_eof() {
   callback_info ci;
   ci.callback = cb_eof;
   _callbacks.push_back(ci);
-  return ;
 }
 
 /**
@@ -94,7 +93,6 @@ void fake_listener::on_error(
   callback_info ci;
   ci.callback = cb_error;
   _callbacks.push_back(ci);
-  return ;
 }
 
 /**
@@ -114,7 +112,7 @@ void fake_listener::on_error(
  */
 void fake_listener::on_execute(
                       unsigned long long cmd_id,
-                      time_t timeout,
+                      const timestamp& timeout,
                       std::string const& host,
                       unsigned short port,
                       std::string const& user,
@@ -138,7 +136,6 @@ void fake_listener::on_execute(
   ci.skip_stderr = skip_stderr;
   ci.is_ipv6 = is_ipv6;
   _callbacks.push_back(ci);
-  return ;
 }
 
 /**
@@ -148,7 +145,6 @@ void fake_listener::on_quit() {
   callback_info ci;
   ci.callback = cb_quit;
   _callbacks.push_back(ci);
-  return ;
 }
 
 /**
@@ -158,7 +154,6 @@ void fake_listener::on_version() {
   callback_info ci;
   ci.callback = cb_version;
   _callbacks.push_back(ci);
-  return ;
 }
 
 /**************************************
@@ -174,7 +169,6 @@ void fake_listener::on_version() {
  */
 void fake_listener::_copy(fake_listener const& fl) {
   _callbacks = fl._callbacks;
-  return ;
 }
 
 /**************************************
@@ -207,7 +201,7 @@ bool operator==(
       if ((it1->callback != it2->callback)
           || ((it1->callback == fake_listener::cb_execute)
               && ((it1->cmd_id != it2->cmd_id)
-                  || (fabs(it1->timeout - it2->timeout) >= 1.0)
+                  || (fabs(it1->timeout.to_seconds() - it2->timeout.to_seconds()) >= 1.0)
                   || (it1->host != it2->host)
                   || (it1->port != it2->port)
                   || (it1->user != it2->user)

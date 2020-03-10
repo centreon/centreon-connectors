@@ -26,6 +26,7 @@
 #  include "com/centreon/connector/ssh/namespace.hh"
 #  include "com/centreon/connector/ssh/sessions/listener.hh"
 #  include "com/centreon/connector/ssh/sessions/session.hh"
+#  include "com/centreon/timestamp.hh"
 
 CCCS_BEGIN()
 
@@ -49,7 +50,7 @@ namespace                  checks {
                              sessions::session& sess,
                              unsigned long long cmd_id,
                              std::list<std::string> const& cmds,
-                             time_t tmt);
+                             const timestamp& tmt);
     void                   listen(checks::listener* listnr);
     void                   on_available(sessions::session& sess);
     void                   on_close(sessions::session& sess);

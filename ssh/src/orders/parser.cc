@@ -241,10 +241,12 @@ void parser::_parse(std::string const& cmd) {
         cmd.c_str() + pos,
         &ptr,
         10)));
+      timestamp ts_timeout = timestamp::now();
+
       if (*ptr)
         throw (basic_error() << "invalid execution request received:" \
                " bad timeout (" << cmd.c_str() + pos << ")");
-      timeout += time(NULL);
+      ts_timeout += timeout;
       pos = end + 1;
       // Find start time.
       end = cmd.find('\0', pos);
@@ -272,7 +274,7 @@ void parser::_parse(std::string const& cmd) {
 
         if (opt.get_timeout()
             && opt.get_timeout() < static_cast<unsigned int>(timeout))
-          timeout = time(NULL) + opt.get_timeout();
+          ts_timeout = timestamp::now() + opt.get_timeout();
         else if (opt.get_timeout() > static_cast<unsigned int>(timeout))
           throw (basic_error() << "invalid execution request " \
                  "received: timeout > to monitoring engine timeout");
@@ -287,7 +289,7 @@ void parser::_parse(std::string const& cmd) {
       if (_listnr)
         _listnr->on_execute(
           cmd_id,
-          timeout,
+          ts_timeout,
           opt.get_host(),
           opt.get_port(),
           opt.get_user(),
@@ -307,5 +309,4 @@ void parser::_parse(std::string const& cmd) {
     throw (basic_error() << "invalid command received (ID "
              << id << ")");
   };
-  return ;
 }
