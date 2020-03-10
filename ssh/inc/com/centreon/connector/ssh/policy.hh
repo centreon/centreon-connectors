@@ -28,6 +28,7 @@
 #  include "com/centreon/connector/ssh/reporter.hh"
 #  include "com/centreon/connector/ssh/sessions/credentials.hh"
 #  include "com/centreon/io/file_stream.hh"
+#  include "com/centreon/timestamp.hh"
 
 CCCS_BEGIN()
 
@@ -57,7 +58,7 @@ public:
                     char const* msg);
   void            on_execute(
                     unsigned long long cmd_id,
-                    time_t timeout,
+                    const timestamp& timeout,
                     std::string const& host,
                     unsigned short port,
                     std::string const& user,

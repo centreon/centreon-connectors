@@ -22,6 +22,7 @@
 #  include <ctime>
 #  include <string>
 #  include "com/centreon/connector/perl/namespace.hh"
+#  include "com/centreon/timestamp.hh"
 
 CCCP_BEGIN()
 
@@ -43,7 +44,7 @@ namespace        orders {
     virtual void on_error() = 0;
     virtual void on_execute(
                    unsigned long long cmd_id,
-                   time_t timeout,
+                   const timestamp& timeout,
                    std::string const& cmd) = 0;
     virtual void on_quit() = 0;
     virtual void on_version() = 0;

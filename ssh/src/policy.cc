@@ -143,7 +143,7 @@ void policy::on_error(unsigned long long cmd_id, char const* msg) {
  */
 void policy::on_execute(
                unsigned long long cmd_id,
-               time_t timeout,
+               const timestamp& timeout,
                std::string const& host,
                unsigned short port,
                std::string const& user,
@@ -157,7 +157,7 @@ void policy::on_execute(
     // Log message.
     log_info(logging::medium) << "got request to execute check "
       << cmd_id << " on session " << user << "@" << host
-      << " (timeout " << timeout << ", first command \""
+      << " (timeout " << timeout.to_seconds() << ", first command \""
       << cmds.front() << "\")";
 
     // Credentials.

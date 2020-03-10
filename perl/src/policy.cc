@@ -111,7 +111,7 @@ void policy::on_error() {
  */
 void policy::on_execute(
                unsigned long long cmd_id,
-               time_t timeout,
+               const timestamp& timeout,
                std::string const& cmd) {
   std::auto_ptr<checks::check> chk(new checks::check);
   chk->listen(this);

@@ -22,6 +22,7 @@
 #include "com/centreon/connector/perl/orders/parser.hh"
 #include "com/centreon/exceptions/basic.hh"
 #include "com/centreon/logging/logger.hh"
+#include "com/centreon/timestamp.hh"
 
 using namespace com::centreon::connector::perl::orders;
 
@@ -74,7 +75,6 @@ void parser::error(handle& h) {
   (void)h;
   if (_listnr)
     _listnr->on_error();
-  return ;
 }
 
 /**
@@ -102,7 +102,6 @@ listener* parser::get_listener() const throw () {
  */
 void parser::listen(listener* l) throw () {
   _listnr = l;
-  return ;
 }
 
 /**
@@ -158,7 +157,6 @@ void parser::read(handle& h) {
       bound = _buffer.find(boundary, 0, sizeof(boundary));
     }
   }
-  return ;
 }
 
 /**
@@ -195,7 +193,6 @@ bool parser::want_write(handle& h) {
 void parser::_copy(parser const& p) {
   _buffer = p._buffer;
   _listnr = p._listnr;
-  return ;
 }
 
 /**
@@ -233,14 +230,13 @@ void parser::_parse(std::string const& cmd) {
       pos = end + 1;
       // Find timeout value.
       end = cmd.find('\0', pos);
-      time_t timeout(static_cast<time_t>(strtoull(
-        cmd.c_str() + pos,
-        &ptr,
-        10)));
+      time_t timeout = static_cast<time_t>(strtoull(cmd.c_str() + pos, &ptr, 10));
+      timestamp ts_timeout = timestamp::now();
+
       if (*ptr)
         throw (basic_error() << "invalid execution request received:" \
                     " bad timeout (" << cmd.c_str() + pos << ")");
-      timeout += time(NULL);
+      ts_timeout += timeout;
       pos = end + 1;
       // Find start time.
       end = cmd.find('\0', pos);
@@ -257,7 +253,7 @@ void parser::_parse(std::string const& cmd) {
       if (_listnr)
         _listnr->on_execute(
           cmd_id,
-          timeout,
+          ts_timeout,
           cmdline);
     }
     break ;
@@ -269,5 +265,4 @@ void parser::_parse(std::string const& cmd) {
     throw (basic_error() << "invalid command received (ID "
              << id << ")");
   };
-  return ;
 }

@@ -24,6 +24,7 @@
 #  include "com/centreon/connector/perl/namespace.hh"
 #  include "com/centreon/connector/perl/pipe_handle.hh"
 #  include "com/centreon/handle_listener.hh"
+#  include "com/centreon/timestamp.hh"
 
 CCCP_BEGIN()
 
@@ -46,7 +47,7 @@ namespace              checks {
     pid_t              execute(
                          unsigned long long cmd_id,
                          std::string const& cmd,
-                         time_t tmt);
+                         const timestamp& tmt);
     void               listen(listener* listnr);
     void               on_timeout(bool final = true);
     void               read(handle& h);
