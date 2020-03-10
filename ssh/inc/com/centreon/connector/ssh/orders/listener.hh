@@ -23,6 +23,7 @@
 #  include <list>
 #  include <string>
 #  include "com/centreon/connector/ssh/namespace.hh"
+#  include "com/centreon/timestamp.hh"
 
 CCCS_BEGIN()
 
@@ -46,7 +47,7 @@ namespace        orders {
                    char const* msg) = 0;
     virtual void on_execute(
                    unsigned long long cmd_id,
-                   time_t timeout,
+                   const timestamp& timeout,
                    std::string const& host,
                    unsigned short port,
                    std::string const& user,

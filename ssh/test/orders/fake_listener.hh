@@ -21,6 +21,9 @@
 
 #  include <list>
 #  include "com/centreon/connector/ssh/orders/listener.hh"
+#  include "com/centreon/timestamp.hh"
+
+using namespace com::centreon;
 
 /**
  *  @class fake_listener fake_listener.hh "test/orders/fake_listener.hh"
@@ -42,7 +45,7 @@ public:
     e_callback     callback;
     unsigned long long
                    cmd_id;
-    time_t         timeout;
+    timestamp      timeout;
     std::string    host;
     unsigned short port;
     std::string    user;
@@ -67,7 +70,7 @@ public:
                      char const* msg);
   void             on_execute(
                      unsigned long long cmd_id,
-                     time_t timeout,
+                     const timestamp& timeout,
                      std::string const& host,
                      unsigned short port,
                      std::string const& user,

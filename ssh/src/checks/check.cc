@@ -95,7 +95,7 @@ void check::execute(
               sessions::session& sess,
               unsigned long long cmd_id,
               std::list<std::string> const& cmds,
-              time_t tmt) {
+              const timestamp& tmt) {
   // Log message.
   log_debug(logging::low) << "check "
     << this << " has ID " << cmd_id;

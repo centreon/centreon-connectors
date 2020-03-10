@@ -65,7 +65,6 @@ void check::error(handle& h) {
   result r;
   r.set_command_id(_cmd_id);
   _send_result_and_unregister(r);
-  return ;
 }
 
 /**
@@ -80,7 +79,7 @@ void check::error(handle& h) {
 pid_t check::execute(
                unsigned long long cmd_id,
                std::string const& cmd,
-               time_t tmt) {
+               const timestamp& tmt) {
   // Run process.
   int fds[3];
   _child = embedded_perl::instance().run(cmd, fds);
@@ -105,7 +104,7 @@ pid_t check::execute(
   std::auto_ptr<timeout> t(new timeout(this, false));
   _timeout = multiplexer::instance().com::centreon::task_manager::add(
     t.get(),
-    tmt - 1,
+    tmt,
     false,
     true);
   t.release();
@@ -122,7 +121,6 @@ void check::listen(listener* listnr) {
   log_debug(logging::medium) << "check " << this
     << " is listened by " << listnr;
   _listnr = listnr;
-  return ;
 }
 
 /**
@@ -159,7 +157,6 @@ void check::on_timeout(bool final) {
       true);
     t.release();
   }
-  return ;
 }
 
 /**
@@ -180,7 +177,6 @@ void check::read(handle& h) {
       << _child << "' stderr";
     _stdout.append(buffer, rb);
   }
-  return ;
 }
 
 /**
@@ -222,8 +218,6 @@ void check::terminated(int exit_code) {
   r.set_error(_stderr);
   r.set_output(_stdout);
   _send_result_and_unregister(r);
-
-  return ;
 }
 
 /**
@@ -235,7 +229,6 @@ void check::unlisten(listener* listnr) {
   log_debug(logging::medium) << "listener " << listnr
     << " stops listening check " << this;
   _listnr = NULL;
-  return ;
 }
 
 /**
@@ -259,7 +252,6 @@ void check::write(handle& h) {
   result r;
   r.set_command_id(_cmd_id);
   _send_result_and_unregister(r);
-  return ;
 }
 
 /**************************************
@@ -302,6 +294,4 @@ void check::_send_result_and_unregister(result const& r) {
     if (_listnr)
       _listnr->on_result(r);
   }
-
-  return ;
 }
