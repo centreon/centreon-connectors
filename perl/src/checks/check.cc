@@ -136,7 +136,6 @@ void check::on_timeout(bool final) {
   // Reset timeout task ID.
   _timeout = 0;
 
-  assert(1==0);
   if (_child <= 0)
     return ;
 
@@ -294,6 +293,5 @@ void check::_send_result_and_unregister(result const& r) {
     // Send check result to listener.
     if (_listnr)
       _listnr->on_result(r);
-    log_error(logging::low) << "SEND RESULT...";
   }
 }
