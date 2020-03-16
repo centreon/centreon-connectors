@@ -20,7 +20,9 @@
 include(${CMAKE_SOURCE_DIR}/cmake/Findclib.cmake)
 include(${CMAKE_SOURCE_DIR}/cmake/Findperl.cmake)
 
-include_directories("${PROJECT_SOURCE_DIR}/inc" "/usr/lib64/perl5/CORE")
+include(${CMAKE_BINARY_DIR}/conan_paths.cmake)
+
+include_directories(${PROJECT_SOURCE_DIR}/inc /usr/lib64/perl5/CORE)
 
 # Project version.
 set(CONNECTOR_PERL_MAJOR 20)
@@ -78,7 +80,7 @@ add_executable(centreon_connector_perl
   ${CMAKE_SOURCE_DIR}/perl/inc/com/centreon/connector/perl/reporter.hh
   )
 
-target_link_libraries(centreon_connector_perl ${CLIB_LIBRARIES} ${PERL_LIBRARIES} pthread)
+target_link_libraries(centreon_connector_perl ${CLIB_LIBRARIES} ${PERL_LIBRARIES} ${spdlog_LIBS} ${fmt_LIBS} pthread)
 
 # Installation path.
 if (WITH_PREFIX)
@@ -105,95 +107,5 @@ endif ()
 # Testing.
 option(WITH_TESTING "Build unit tests." OFF)
 if (WITH_TESTING)
-  # Enable testing.
-  enable_testing()
-  include_directories("${PROJECT_SOURCE_DIR}")
-  set(CONNECTOR_TEST_DIR "${PROJECT_SOURCE_DIR}/test/connector")
-  get_property(CONNECTOR_PERL_BINARY
-    TARGET "${CONNECTOR}"
-    PROPERTY LOCATION)
-  configure_file(
-    "${TEST_DIR}/connector/paths.hh.in"
-    "${TEST_DIR}/connector/paths.hh")
-
-  set(CONNECTOR_TEST_LIST
-    ${TEST_DIR}/embedded_perl/run_simple_1.cc
-    ${TEST_DIR}/embedded_perl/run_simple_2.cc
-    )
-
-  foreach (name ${CONNECTOR_TEST_LIST})
-    # name cc file => bin_name binary name
-    string(REGEX REPLACE "^${TEST_DIR}/" "" bin_name ${name})
-    string(REGEX REPLACE "/" "_" bin_name ${bin_name})
-    string(REGEX REPLACE ".cc$" "" bin_name ${bin_name})
-
-    add_executable("${bin_name}" "${name}")
-    target_link_libraries("${bin_name}" "${CONNECTORLIB}")
-    add_test("${bin_name}" "${bin_name}")
-    list(APPEND TEST_BIN_LIST ${bin_name})
-  endforeach ()
-
-  #
-  # Process tests.
-  #
-  # Help.
-  add_test("connector_help" "${CONNECTOR}" "--help")
-  list(APPEND TEST_BIN_TEST "connector_help")
-
-  # Version.
-  add_test("connector_version" "${CONNECTOR}" "--version")
-  list(APPEND TEST_BIN_TEST "connector_version")
-  # Invalid flag.
-  add_test("connector_invalid_flag" "${CONNECTOR}" "--merethis")
-  list(APPEND TEST_BIN_LIST "connector_invalid_flag")
-
-  set_tests_properties("connector_invalid_flag"
-    PROPERTIES WILL_FAIL TRUE)
-  # Execution library.
-  add_library("test_execute" STATIC
-    "${TEST_DIR}/connector/misc.cc"
-    "${TEST_DIR}/connector/misc.hh")
-  set(TEST_LIBRARIES ${CLIB_LIBRARIES} "test_execute")
-
-  # EOF on stdin.
-  set(TEST_NAME "connector_eof_on_stdin")
-  add_executable("${TEST_NAME}"
-    "${TEST_DIR}/connector/eof_on_stdin.cc")
-  target_link_libraries("${TEST_NAME}" ${CLIB_LIBRARIES})
-  add_test("${TEST_NAME}" "${TEST_NAME}")
-  list(APPEND TEST_BIN_LIST "connector_eof_on_stdin")
-
-  set(TEST_LIST
-    ${TEST_DIR}/connector/non_existent_script.cc
-    ${TEST_DIR}/connector/timeout_term.cc
-    ${TEST_DIR}/connector/timeout_kill.cc
-    ${TEST_DIR}/connector/execute_single_script.cc
-    ${TEST_DIR}/connector/execute_single_script_log_file.cc
-    ${TEST_DIR}/connector/execute_multiple_scripts.cc
-    ${TEST_DIR}/connector/execute_with_additional_code.cc
-    ${TEST_DIR}/connector/execute_module_loading.cc
-  )
-
-  foreach (name ${TEST_LIST})
-    # name cc file => bin_name binary name
-    string(REGEX REPLACE "^${TEST_DIR}/" "" bin_name ${name})
-    string(REGEX REPLACE "/" "_" bin_name ${bin_name})
-    string(REGEX REPLACE ".cc$" "" bin_name ${bin_name})
-
-    add_executable("${bin_name}" "${name}")
-    target_link_libraries("${bin_name}" "${TEST_LIBRARIES}")
-    add_test("${bin_name}" "${bin_name}")
-    list(APPEND TEST_BIN_LIST ${bin_name})
-  endforeach ()
-
-  if (WITH_COVERAGE)
-    set(COVERAGE_EXCLUDES '${PROJECT_BINARY_DIR}/*' '${PROJECT_SOURCE_DIR}/test/*' '/usr/include/*')
-    SETUP_TARGET_FOR_COVERAGE(
-      NAME test-coverage
-      EXECUTABLE ctest
-      DEPENDENCIES
-      ${TEST_BIN_LIST}
-      )
-  endif ()
-
+  add_subdirectory(test)
 endif ()
