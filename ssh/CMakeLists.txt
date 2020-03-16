@@ -92,6 +92,7 @@ if (WITH_COVERAGE)
   APPEND_COVERAGE_COMPILER_FLAGS()
 endif ()
 
+#[[
 # Testing.
 option(WITH_TESTING "Build unit tests." OFF)
 if (WITH_TESTING)
@@ -245,3 +246,4 @@ set(CONNECTOR_TEST_LIST
       )
   endif ()
 endif ()
+]]

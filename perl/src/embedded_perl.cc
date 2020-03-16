@@ -60,6 +60,7 @@ embedded_perl::~embedded_perl() {
       perl_destruct(my_perl);
       perl_free(my_perl);
       PERL_SYS_TERM();
+      my_perl = nullptr;
     }
   }
 }
