@@ -16,13 +16,6 @@
 ## For more information : contact@centreon.com
 ##
 
-# Project version.
-set(CONNECTOR_PERL_MAJOR 20)
-set(CONNECTOR_PERL_MINOR 04)
-set(CONNECTOR_PERL_PATCH 0)
-set(CONNECTOR_PERL_VERSION "${CONNECTOR_PERL_MAJOR}.${CONNECTOR_PERL_MINOR}.${CONNECTOR_PERL_PATCH}")
-add_definitions(-DCENTREON_CONNECTOR_PERL_VERSION=\"${CONNECTOR_PERL_VERSION}\")
-
 # Generate code to dynamically load modules.
 add_custom_command(OUTPUT "${CMAKE_SOURCE_DIR}/perl/src/xs_init.cc"
   COMMAND "${PERL_EXECUTABLE}" "-MExtUtils::Embed" "-e" "xsinit" "--" "-o" "${CMAKE_SOURCE_DIR}/perl/src/xs_init.cc")

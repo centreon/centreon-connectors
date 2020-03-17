@@ -16,14 +16,6 @@
 ## For more information : contact@centreon.com
 ##
 
-# Project version.
-set(CONNECTOR_SSH_MAJOR 20)
-set(CONNECTOR_SSH_MINOR 04)
-set(CONNECTOR_SSH_PATCH 0)
-set(CONNECTOR_SSH_VERSION "${CONNECTOR_SSH_MAJOR}.${CONNECTOR_SSH_MINOR}.${CONNECTOR_SSH_PATCH}")
-add_definitions(-DCENTREON_CONNECTOR_SSH_VERSION=\"${CONNECTOR_SSH_VERSION}\")
-
-
 # Should the connector perform check against known_hosts file ?
 option(WITH_KNOWN_HOSTS_CHECK "Check hosts against user's known_hosts file." OFF)
 if (WITH_KNOWN_HOSTS_CHECK)

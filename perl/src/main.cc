@@ -34,9 +34,9 @@ using namespace com::centreon;
 using namespace com::centreon::connector::perl;
 
 // Should be defined by build tools.
-#ifndef CENTREON_CONNECTOR_PERL_VERSION
-#define CENTREON_CONNECTOR_PERL_VERSION "(development version)"
-#endif  // !CENTREON_CONNECTOR_PERL_VERSION
+#ifndef CENTREON_CONNECTOR_VERSION
+#define CENTREON_CONNECTOR_VERSION "(development version)"
+#endif  // !CENTREON_CONNECTOR_VERSION
 
 // Termination flag.
 volatile bool should_exit(false);
@@ -86,7 +86,7 @@ int main(int argc, char** argv, char** env) {
       std::cout << opts.help() << std::endl;
       retval = EXIT_SUCCESS;
     } else if (opts.get_argument("version").get_is_set()) {
-      std::cout << "Centreon Perl Connector " << CENTREON_CONNECTOR_PERL_VERSION
+      std::cout << "Centreon Perl Connector " << CENTREON_CONNECTOR_VERSION
                 << std::endl;
       retval = EXIT_SUCCESS;
     } else {
@@ -103,7 +103,7 @@ int main(int argc, char** argv, char** env) {
         log_v2::instance().set_level(spdlog::level::info);
       }
       log_v2::core()->info("Centreon Perl Connector {} starting",
-                           CENTREON_CONNECTOR_PERL_VERSION);
+                           CENTREON_CONNECTOR_VERSION);
 
       // Set termination handler.
       log_v2::core()->debug("installing termination handler");
