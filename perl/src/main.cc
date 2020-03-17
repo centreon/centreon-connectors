@@ -19,13 +19,16 @@
 #include <csignal>
 #include <cstdlib>
 #include <iostream>
+#include <EXTERN.h>
+#include <perl.h>
+
 #include "com/centreon/connector/perl/embedded_perl.hh"
+#include "com/centreon/connector/perl/log_v2.h"
 #include "com/centreon/connector/perl/multiplexer.hh"
 #include "com/centreon/connector/perl/options.hh"
 #include "com/centreon/connector/perl/policy.hh"
 #include "com/centreon/exceptions/basic.hh"
 #include "com/centreon/logging/file.hh"
-#include "com/centreon/logging/logger.hh"
 
 using namespace com::centreon;
 using namespace com::centreon::connector::perl;
@@ -64,8 +67,7 @@ int main(int argc, char** argv, char** env) {
   // Return value.
   int retval(EXIT_FAILURE);
 
-  // Log object.
-  logging::file* log_file = NULL;
+  PERL_SYS_INIT3(&argc, &argv, &env);
 
   try {
     // Initializations.
@@ -91,28 +93,21 @@ int main(int argc, char** argv, char** env) {
       // Set logging object.
       if (opts.get_argument("log-file").get_is_set()) {
         std::string filename(opts.get_argument("log-file").get_value());
-        log_file = new logging::file(filename);
+        log_v2::instance().switch_to_file(filename);
       } else
-        log_file = new logging::file(stderr);
+        log_v2::instance().switch_to_stdout();
 
       if (opts.get_argument("debug").get_is_set()) {
-        log_file->show_pid(true);
-        log_file->show_thread_id(true);
-        logging::engine::instance().add(
-            log_file,
-            logging::type_debug | logging::type_info | logging::type_error,
-            logging::high);
+        log_v2::instance().set_level(spdlog::level::trace);
       } else {
-        log_file->show_pid(false);
-        log_file->show_thread_id(false);
-        logging::engine::instance().add(
-            log_file, logging::type_info | logging::type_error, logging::low);
+        log_v2::instance().set_level(spdlog::level::info);
       }
-      log_info(logging::low) << "Centreon Perl Connector "
-                             << CENTREON_CONNECTOR_PERL_VERSION << " starting";
+      log_v2::core()->info("Centreon Perl Connector {} starting",
+                           CENTREON_CONNECTOR_PERL_VERSION);
 
       // Set termination handler.
-      log_debug(logging::medium) << "installing termination handler";
+      log_v2::core()->debug("installing termination handler");
+
       signal(SIGTERM, term_handler);
 
       // Load Embedded Perl.
@@ -126,14 +121,13 @@ int main(int argc, char** argv, char** env) {
       retval = (p.run() ? EXIT_SUCCESS : EXIT_FAILURE);
     }
   } catch (std::exception const& e) {
-    log_error(logging::low) << e.what();
+    log_v2::core()->error(e.what());
   }
 
   // Deinitializations.
   embedded_perl::unload();
   multiplexer::unload();
-  if (log_file)
-    delete log_file;
 
+  PERL_SYS_TERM();
   return retval;
 }

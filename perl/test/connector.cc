@@ -326,10 +326,10 @@ TEST_F(TestConnector, ExecuteSingleScriptLogFile) {
   ASSERT_EQ(retval, 0);
   ASSERT_EQ(output.size(), sizeof(result) - 1);
   ASSERT_FALSE(memcmp(output.c_str(), result, sizeof(result) - 1));
-  std::string line;
   std::ifstream file("/tmp/log_file");
   ASSERT_TRUE(file.is_open());
-  getline(file, line);
+  std::string line((std::istreambuf_iterator<char>(file)),
+                  std::istreambuf_iterator<char>());
   ASSERT_NE(
       line.find(
           "[info] Centreon Perl Connector " CENTREON_CONNECTOR_VERSION
