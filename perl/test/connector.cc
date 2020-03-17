@@ -332,7 +332,7 @@ TEST_F(TestConnector, ExecuteSingleScriptLogFile) {
   getline(file, line);
   ASSERT_NE(
       line.find(
-          "[info] Centreon Perl Connector " CENTREON_CONNECTOR_PERL_VERSION
+          "[info] Centreon Perl Connector " CENTREON_CONNECTOR_VERSION
           " starting"),
       std::string::npos);
   file.close();
