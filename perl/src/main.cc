@@ -16,6 +16,7 @@
 ** For more information : contact@centreon.com
 */
 
+#include "com/centreon/connector/perl/log_v2.h"
 #include <csignal>
 #include <cstdlib>
 #include <iostream>
@@ -23,7 +24,6 @@
 #include <perl.h>
 
 #include "com/centreon/connector/perl/embedded_perl.hh"
-#include "com/centreon/connector/perl/log_v2.h"
 #include "com/centreon/connector/perl/multiplexer.hh"
 #include "com/centreon/connector/perl/options.hh"
 #include "com/centreon/connector/perl/policy.hh"

@@ -25,8 +25,8 @@
 #include "com/centreon/connector/perl/checks/listener.hh"
 #include "com/centreon/connector/perl/checks/result.hh"
 #include "com/centreon/connector/perl/checks/timeout.hh"
-#include "com/centreon/connector/perl/embedded_perl.hh"
 #include "com/centreon/connector/perl/log_v2.h"
+#include "com/centreon/connector/perl/embedded_perl.hh"
 #include "com/centreon/connector/perl/multiplexer.hh"
 
 using namespace com::centreon;

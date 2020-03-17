@@ -16,6 +16,10 @@
 ** For more information : contact@centreon.com
 */
 
+
+#include "com/centreon/connector/perl/log_v2.h"
+#include "com/centreon/connector/perl/pipe_handle.hh"
+#include "com/centreon/exceptions/basic.hh"
 #include "com/centreon/connector/perl/embedded_perl.hh"
 
 #include <EXTERN.h>
@@ -26,9 +30,6 @@
 #include <iostream>
 #include <list>
 
-#include "com/centreon/connector/perl/log_v2.h"
-#include "com/centreon/connector/perl/pipe_handle.hh"
-#include "com/centreon/exceptions/basic.hh"
 
 using namespace com::centreon;
 using namespace com::centreon::connector::perl;
