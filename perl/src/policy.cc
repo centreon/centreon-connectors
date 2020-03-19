@@ -70,13 +70,10 @@ policy::~policy() throw() {
   }
 
   // Close checks.
-  for (std::map<pid_t, checks::check*>::iterator it = _checks.begin(),
-                                                 end = _checks.end();
-       it != end; ++it) {
+  for (auto it = _checks.begin(), end = _checks.end(); it != end; ++it) {
     try {
       it->second->unlisten(this);
-    } catch (...) {
-    }
+    } catch (...) { }
     delete it->second;
   }
   _checks.clear();

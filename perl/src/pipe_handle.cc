@@ -87,8 +87,7 @@ void pipe_handle::close() noexcept {
  */
 void pipe_handle::close_all_handles() {
   std::lock_guard<std::mutex> lock(gl_fdsm);
-  for (std::multiset<int>::const_iterator it(gl_fds.begin()), end(gl_fds.end());
-       it != end; ++it) {
+  for (auto it(gl_fds.begin()), end(gl_fds.end()); it != end; ++it) {
     int retval;
     do {
       retval = ::close(*it);

@@ -60,20 +60,10 @@ bool reporter::can_report() const noexcept {
  *
  *  @param[in] h Unused.
  */
-void reporter::error(handle& h) {
-  (void)h;
+void reporter::error([[maybe_unused]] handle& h) {
   _can_report = false;
-  throw(basic_error() << "error detected on the handle used"
-                         " to report to the monitoring engine");
-}
-
-/**
- *  Get reporter's internal buffer.
- *
- *  @return Internal buffer.
- */
-std::string const& reporter::get_buffer() const noexcept {
-  return _buffer;
+  throw basic_error() << "error detected on the handle used"
+                         " to report to the monitoring engine";
 }
 
 /**

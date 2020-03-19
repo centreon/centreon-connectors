@@ -42,12 +42,12 @@ using namespace com::centreon::connector::perl::checks;
 /**
  *  Default constructor.
  */
-check::check() : _child((pid_t)-1), _cmd_id(0), _listnr(NULL), _timeout(0) {}
+check::check() : _child((pid_t)-1), _cmd_id(0), _listnr(nullptr), _timeout(0) {}
 
 /**
  *  Destructor.
  */
-check::~check() throw() {
+check::~check() noexcept {
   try {
     // Send result if we haven't already done so.
     result r;
@@ -78,7 +78,7 @@ void check::error(handle& h) {
  *
  *  @return Process ID.
  */
-pid_t check::execute(unsigned long long cmd_id,
+pid_t check::execute(uint64_t cmd_id,
                      std::string const& cmd,
                      const timestamp& tmt) {
   // Run process.
@@ -143,7 +143,7 @@ void check::on_timeout(bool final) {
     // Schedule a final timeout.
     std::unique_ptr<timeout> t(new timeout(this, true));
     _timeout = multiplexer::instance().com::centreon::task_manager::add(
-        t.get(), time(NULL) + 1, false, true);
+        t.get(), time(nullptr) + 1, false, true);
     t.release();
   }
 }
@@ -213,7 +213,7 @@ void check::terminated(int exit_code) {
 void check::unlisten(listener* listnr) {
   log::core()->debug("listener {0} stops listening check {1}",
                         static_cast<void*>(_listnr), static_cast<void*>(this));
-  _listnr = NULL;
+  _listnr = nullptr;
 }
 
 /**
@@ -221,8 +221,7 @@ void check::unlisten(listener* listnr) {
  *
  *  @return true.
  */
-bool check::want_read(handle& h) {
-  (void)h;
+bool check::want_read([[maybe_unused]] handle& h) {
   return true;
 }
 
@@ -231,9 +230,8 @@ bool check::want_read(handle& h) {
  *
  *  @param[in] h Unused.
  */
-void check::write(handle& h) {
+void check::write([[maybe_unused]] handle& h) {
   // This is an error, we shouldn't have been called.
-  (void)h;
   result r;
   r.set_command_id(_cmd_id);
   _send_result_and_unregister(r);

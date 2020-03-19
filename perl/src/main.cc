@@ -45,8 +45,7 @@ volatile bool should_exit(false);
  *
  *  @param[in] signum Unused.
  */
-static void term_handler(int signum) {
-  (void)signum;
+static void term_handler([[maybe_unused]] int signum) {
   int old_errno(errno);
   should_exit = true;
   signal(SIGTERM, SIG_DFL);
@@ -113,7 +112,7 @@ int main(int argc, char** argv, char** env) {
       embedded_perl::load(&argc, &argv, &env,
                           (opts.get_argument("code").get_is_set()
                                ? opts.get_argument("code").get_value().c_str()
-                               : NULL));
+                               : nullptr));
 
       // Program policy.
       policy p;
