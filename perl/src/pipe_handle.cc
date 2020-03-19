@@ -17,15 +17,19 @@
 */
 
 #include "com/centreon/connector/perl/pipe_handle.hh"
+
 #include <unistd.h>
+
 #include <cerrno>
 #include <cstring>
 #include <mutex>
 #include <set>
+
+#include "com/centreon/connector/log.hh"
 #include "com/centreon/exceptions/basic.hh"
-#include "com/centreon/connector/perl/log_v2.h"
 
 using namespace com::centreon;
+using namespace com::centreon::connector;
 using namespace com::centreon::connector::perl;
 
 /**************************************
@@ -72,7 +76,7 @@ void pipe_handle::close() noexcept {
     }
     if (::close(_fd) != 0) {
       char const* msg(strerror(errno));
-      log_v2::core()->error("could not close pipe FD: {}", msg);
+      log::core()->error("could not close pipe FD: {}", msg);
     }
     _fd = -1;
   }

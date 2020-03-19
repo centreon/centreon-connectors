@@ -17,7 +17,6 @@
 */
 
 
-#include "com/centreon/connector/perl/log_v2.h"
 #include "com/centreon/connector/perl/pipe_handle.hh"
 #include "com/centreon/exceptions/basic.hh"
 #include "com/centreon/connector/perl/embedded_perl.hh"
@@ -30,6 +29,9 @@
 #include <iostream>
 #include <list>
 
+#include "com/centreon/connector/log.hh"
+#include "com/centreon/connector/perl/pipe_handle.hh"
+#include "com/centreon/exceptions/basic.hh"
 
 using namespace com::centreon;
 using namespace com::centreon::connector::perl;
@@ -58,7 +60,7 @@ embedded_perl::~embedded_perl() {
   // Clean only if within parent process.
   if (_self == getpid()) {
     // Clean Perl interpreter.
-    log_v2::core()->info("cleaning up Embedded Perl");
+    log::core()->info("cleaning up Embedded Perl");
     if (my_perl) {
       PL_perl_destruct_level = 1;
       perl_destruct(my_perl);
@@ -117,9 +119,9 @@ pid_t embedded_perl::run(std::string const& cmd, int fds[3]) {
     args = cmd.substr(pos + 1);
   } else
     file = cmd;
-  log_v2::core()->debug("command {}", cmd);
-  log_v2::core()->debug("  - file {}", file);
-  log_v2::core()->debug("  - args {}", args);
+  log::core()->debug("command {}", cmd);
+  log::core()->debug("  - file {}", file);
+  log::core()->debug("  - args {}", args);
 
   // Check if file has already been compiled.
   SV* handle;
@@ -128,7 +130,7 @@ pid_t embedded_perl::run(std::string const& cmd, int fds[3]) {
   if (it == _parsed.end()) {
     // Compile Perl file.
     {
-      log_v2::core()->debug("parsing file {}", file);
+      log::core()->debug("parsing file {}", file);
       char const* argv[3];
       argv[0] = file.c_str();
       argv[1] = "0";
@@ -282,7 +284,7 @@ embedded_perl::embedded_perl(int* argc,
 
   // Set original PID.
   _self = getpid();
-  log_v2::core()->debug("self PID is {}", _self);
+  log::core()->debug("self PID is {}", _self);
 
   // Temporary script path.
   char script_path[] = SCRIPT_PATH;
@@ -293,7 +295,7 @@ embedded_perl::embedded_perl(int* argc,
       char const* msg(strerror(errno));
       throw(basic_error() << "could not create temporary file: " << msg);
     }
-    log_v2::core()->info("temporary script path is {}", script_path);
+    log::core()->info("temporary script path is {}", script_path);
 
     // Write embedded script.
     std::list<char const*> l;
@@ -323,10 +325,10 @@ embedded_perl::embedded_perl(int* argc,
   }
 
   // Initialize Perl interpreter.
-  log_v2::core()->info("loading Embedded Perl interpreter");
+  log::core()->info("loading Embedded Perl interpreter");
 
   if (!(my_perl = perl_alloc())) {
-    log_v2::core()->error("could not allocate Perl interpreter");
+    log::core()->error("could not allocate Perl interpreter");
     throw(basic_error() << "could not allocate Perl interpreter");
   }
   perl_construct(my_perl);
@@ -339,7 +341,7 @@ embedded_perl::embedded_perl(int* argc,
   embedding[1] = script_path;
   if (perl_parse(my_perl, &xs_init, sizeof(embedding) / sizeof(*embedding),
                  (char**)embedding, NULL)) {
-    log_v2::core()->error("could not parse embedded Perl script");
+    log::core()->error("could not parse embedded Perl script");
     throw(basic_error() << "could not parse embedded Perl script");
   }
   PL_exit_flags |= PERL_EXIT_DESTRUCT_END;
