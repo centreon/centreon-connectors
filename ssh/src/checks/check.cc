@@ -18,7 +18,6 @@
 
 #include "com/centreon/connector/ssh/checks/check.hh"
 #include <cstdio>
-#include <cstdlib>
 #include <memory>
 #include "com/centreon/connector/ssh/checks/timeout.hh"
 #include "com/centreon/connector/ssh/multiplexer.hh"
@@ -52,7 +51,7 @@ check::check(int skip_stdout, int skip_stderr)
 /**
  *  Destructor.
  */
-check::~check() throw() {
+check::~check() noexcept {
   try {
     // Send result if we haven't already done so.
     sessions::session* sess(_session);
@@ -169,7 +168,7 @@ void check::on_available(sessions::session& sess) {
         }
       } break;
       default:
-        throw(basic_error() << "channel requested to run at invalid step");
+        throw basic_error() << "channel requested to run at invalid step";
     }
   } catch (std::exception const& e) {
     log_error(logging::low)
@@ -195,8 +194,7 @@ void check::on_available(sessions::session& sess) {
  *
  *  @param[in] sess Closing session.
  */
-void check::on_close(sessions::session& sess) {
-  (void)sess;
+void check::on_close([[maybe_unused]] sessions::session& sess) {
   log_error(logging::medium) << "session closed before check could execute";
   result r;
   r.set_command_id(_cmd_id);
@@ -265,7 +263,7 @@ bool check::_close() {
                                    nullptr, 0);
         if (ret == LIBSSH2_ERROR_SOCKET_SEND)
           _session->error();
-        throw(basic_error() << "could not close channel: " << msg);
+        throw basic_error() << "could not close channel: " << msg;
       }
       retval = true;
     }
@@ -303,8 +301,7 @@ bool check::_close() {
   }
   // Attempt to close a closed channel.
   else
-    throw(
-        basic_error() << "channel requested to close whereas it wasn't opened");
+    throw basic_error() << "channel requested to close whereas it wasn't opened";
 
   return retval;
 }
@@ -369,7 +366,7 @@ bool check::_read() {
                                  0);
       if (orb == LIBSSH2_ERROR_SOCKET_SEND)
         _session->error();
-      throw(basic_error() << "failed to read command output: " << msg);
+      throw basic_error() << "failed to read command output: " << msg;
     }
   }
   // Append data.

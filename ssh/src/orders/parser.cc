@@ -42,8 +42,7 @@ parser::parser() : _listnr(nullptr) {}
  *
  *  @param[in] h Handle.
  */
-void parser::error(handle& h) {
-  (void)h;
+void parser::error([[maybe_unused]]handle& h) {
   if (_listnr)
     _listnr->on_error(0, "error on handle");
 }
@@ -133,7 +132,7 @@ void parser::read(handle& h) {
  *
  *  @return Always true.
  */
-bool parser::want_read(handle& h) {
+bool parser::want_read([[maybe_unused]]handle& h) {
   (void)h;
   return true;
 }
@@ -143,7 +142,7 @@ bool parser::want_read(handle& h) {
  *
  *  @return Always false (class just parse).
  */
-bool parser::want_write(handle& h) {
+bool parser::want_write([[maybe_unused]]handle& h) {
   (void)h;
   return false;
 }
@@ -165,7 +164,7 @@ bool parser::want_write(handle& h) {
 void parser::_parse(std::string const& cmd) {
   // Get command ID.
   size_t pos(cmd.find('\0'));
-  unsigned int id(strtoul(cmd.c_str(), NULL, 10));
+  unsigned int id(strtoul(cmd.c_str(), nullptr, 10));
   ++pos;
 
   // Process each command as necessary.
@@ -181,12 +180,12 @@ void parser::_parse(std::string const& cmd) {
 
       // Find command ID.
       size_t end(cmd.find('\0', pos));
-      char* ptr(NULL);
+      char* ptr(nullptr);
       unsigned long long cmd_id(strtoull(cmd.c_str() + pos, &ptr, 10));
       if (!cmd_id || *ptr)
-        throw(basic_error() << "invalid execution request received:"
+        throw basic_error() << "invalid execution request received:"
                                " bad command ID ("
-                            << cmd.c_str() + pos << ")");
+                            << cmd.c_str() + pos << ")";
       pos = end + 1;
       // Find timeout value.
       end = cmd.find('\0', pos);
@@ -195,9 +194,9 @@ void parser::_parse(std::string const& cmd) {
       timestamp ts_timeout = timestamp::now();
 
       if (*ptr)
-        throw(basic_error() << "invalid execution request received:"
+        throw basic_error() << "invalid execution request received:"
                                " bad timeout ("
-                            << cmd.c_str() + pos << ")");
+                            << cmd.c_str() + pos << ")";
       ts_timeout += timeout;
       pos = end + 1;
       // Find start time.
@@ -205,32 +204,32 @@ void parser::_parse(std::string const& cmd) {
       time_t start_time(
           static_cast<time_t>(strtoull(cmd.c_str() + pos, &ptr, 10)));
       if (*ptr || !start_time)
-        throw(basic_error() << "invalid execution request received:"
+        throw basic_error() << "invalid execution request received:"
                                " bad start time ("
-                            << cmd.c_str() + pos << ")");
+                            << cmd.c_str() + pos << ")";
       pos = end + 1;
       // Find command to execute.
       end = cmd.find('\0', pos);
       std::string cmdline(cmd.substr(pos, end - pos));
       if (cmdline.empty())
-        throw(basic_error() << "invalid execution request received:"
+        throw basic_error() << "invalid execution request received:"
                                " bad command line ("
-                            << cmd.c_str() + pos << ")");
+                            << cmd.c_str() + pos << ")";
       options opt;
       try {
         opt.parse(cmdline);
         if (opt.get_commands().empty())
-          throw(basic_error() << "invalid execution request "
+          throw basic_error() << "invalid execution request "
                                  "received: bad command line ("
-                              << cmd.c_str() + pos << ")");
+                              << cmd.c_str() + pos << ")";
 
         if (opt.get_timeout() &&
             opt.get_timeout() < static_cast<unsigned int>(timeout))
           ts_timeout = timestamp::now() + opt.get_timeout();
         else if (opt.get_timeout() > static_cast<unsigned int>(timeout))
-          throw(basic_error()
+          throw basic_error()
                 << "invalid execution request "
-                   "received: timeout > to monitoring engine timeout");
+                   "received: timeout > to monitoring engine timeout";
       } catch (std::exception const& e) {
         if (_listnr)
           _listnr->on_error(cmd_id, e.what());

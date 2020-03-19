@@ -57,11 +57,10 @@ bool reporter::can_report() const noexcept {
  *
  *  @param[in] h Unused.
  */
-void reporter::error(handle& h) {
-  (void)h;
+void reporter::error([[maybe_unused]] handle& h) {
   _can_report = false;
-  throw(basic_error() << "error detected on the handle used"
-                         " to report to the monitoring engine");
+  throw basic_error() << "error detected on the handle used"
+                         " to report to the monitoring engine";
 }
 
 /**
@@ -146,8 +145,7 @@ void reporter::send_version(unsigned int major, unsigned int minor) {
  *
  *  @param[in] h Monitoring engine handle.
  */
-bool reporter::want_write(handle& h) {
-  (void)h;
+bool reporter::want_write([[maybe_unused]]handle& h) {
   return can_report() && !_buffer.empty();
 }
 

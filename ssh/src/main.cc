@@ -77,7 +77,7 @@ int main(int argc, char* argv[]) {
   int retval(EXIT_FAILURE);
 
   // Log object.
-  logging::file* log_file = NULL;
+  logging::file* log_file = nullptr;
 
   try {
     // Initializations.
@@ -163,8 +163,7 @@ int main(int argc, char* argv[]) {
 
   // Deinitializations.
   multiplexer::unload();
-  if (log_file)
-    delete log_file;
+  delete log_file;
 
   return retval;
 }

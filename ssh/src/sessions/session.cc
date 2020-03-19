@@ -26,7 +26,6 @@
 #include <sys/socket.h>
 #include <unistd.h>
 #include <cerrno>
-#include <cstdlib>
 #include <cstring>
 #include <memory>
 #include "com/centreon/connector/ssh/multiplexer.hh"
@@ -233,8 +232,7 @@ void session::error() {
  *
  *  @param[in,out] h Handle.
  */
-void session::error(handle& h) {
-  (void)h;
+void session::error([[maybe_unused]] handle& h) {
   log_error(logging::low) << "error detected on socket, shutting down session "
                           << _creds.get_user() << "@" << _creds.get_host()
                           << ":" << _creds.get_port();
@@ -319,8 +317,7 @@ LIBSSH2_CHANNEL* session::new_channel() {
  *
  *  @param[in] h Handle.
  */
-void session::read(handle& h) {
-  (void)h;
+void session::read([[maybe_unused]] handle& h) {
   static void (session::*const redirector[])() = {
       &session::_startup, &session::_passwd,
       &session::_key,     &session::_available};
@@ -342,7 +339,7 @@ void session::read(handle& h) {
  */
 void session::unlisten(listener* listnr) {
   unsigned int size(_listnrs.size());
-  std::set<listener*>::iterator it(_listnrs.find(listnr));
+  auto it(_listnrs.find(listnr));
   if (it != _listnrs.end()) {
     if (_listnrs_it == it)
       ++_listnrs_it;
@@ -358,8 +355,7 @@ void session::unlisten(listener* listnr) {
  *
  *  @return true if read monitoring is wanted.
  */
-bool session::want_read(handle& h) {
-  (void)h;
+bool session::want_read([[maybe_unused]]handle& h) {
   bool retval(_session && (libssh2_session_block_directions(_session) &
                            LIBSSH2_SESSION_BLOCK_INBOUND));
   log_debug(logging::low) << "session " << _creds.get_user() << "@"
@@ -374,8 +370,7 @@ bool session::want_read(handle& h) {
  *
  *  @return true if write monitoring is wanted.
  */
-bool session::want_write(handle& h) {
-  (void)h;
+bool session::want_write([[maybe_unused]] handle& h) {
   bool retval(_session && ((libssh2_session_block_directions(_session) &
                             LIBSSH2_SESSION_BLOCK_OUTBOUND) ||
                            _needed_new_chan));

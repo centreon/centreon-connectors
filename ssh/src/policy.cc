@@ -17,10 +17,8 @@
 */
 
 #include <atomic>
-#include <sstream>
 #include "com/centreon/connector/ssh/policy.hh"
 #include <cstdio>
-#include <cstdlib>
 #include <memory>
 #include "com/centreon/connector/ssh/checks/check.hh"
 #include "com/centreon/connector/ssh/checks/result.hh"
@@ -76,10 +74,7 @@ policy::~policy() noexcept {
   _checks.clear();
 
   // Close sessions.
-  for (std::map<sessions::credentials, sessions::session*>::iterator
-           it = _sessions.begin(),
-           end = _sessions.end();
-       it != end; ++it) {
+  for (auto it = _sessions.begin(), end = _sessions.end(); it != end; ++it) {
     try {
       it->second->close();
     } catch (...) {
@@ -243,11 +238,7 @@ void policy::on_result(checks::result const& r) {
           << " is not"
              " connected, checking if any check working with it remains";
       bool found(false);
-      for (std::map<uint64_t,
-                    std::pair<checks::check*, sessions::session*> >::iterator
-               it = _checks.begin(),
-               end = _checks.end();
-           it != end; ++it)
+      for (auto it = _checks.begin(), end = _checks.end(); it != end; ++it)
         if (it->second.second == sess) {
           found = true;
           break;
