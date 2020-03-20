@@ -26,7 +26,6 @@
 #include "com/centreon/connector/perl/options.hh"
 #include "com/centreon/connector/perl/policy.hh"
 #include "com/centreon/exceptions/basic.hh"
-#include "com/centreon/logging/file.hh"
 
 using namespace com::centreon;
 using namespace com::centreon::connector;
