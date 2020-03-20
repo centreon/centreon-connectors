@@ -19,6 +19,7 @@
 
 #include "com/centreon/connector/perl/pipe_handle.hh"
 #include "com/centreon/exceptions/basic.hh"
+#include "com/centreon/connector/log.hh"
 #include "com/centreon/connector/perl/embedded_perl.hh"
 
 #include <perl.h>
@@ -27,8 +28,6 @@
 #include <cstdlib>
 #include <iostream>
 #include <list>
-
-#include "com/centreon/connector/log.hh"
 
 using namespace com::centreon;
 using namespace com::centreon::connector::perl;
