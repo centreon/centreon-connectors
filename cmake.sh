@@ -19,8 +19,7 @@ else
 fi
 
 cd build
-conan remote add centreon https://api.bintray.com/conan/centreon/centreon
-conan install --remote centreon ..
+conan install ..
 
 CXXFLAGS="-Wall -Wextra" "$cmake" -DCMAKE_BUILD_TYPE=Debug -DWITH_TESTING=On -DWITH_PREFIX_BINARY=/usr/lib64/centreon-connector/ $* ..
 
