@@ -36,7 +36,7 @@ stage('Source') {
 }
 
 try {
-  stage('Unit tests') {
+  stage('Sonar analysis') {
     parallel 'centos7': {
       node {
         sh 'setup_centreon_build.sh'
