@@ -70,11 +70,11 @@ stage('Source') {
 }
 
 try {
-  stage('Sonar analysis') {
+ /* stage('Sonar analysis') {
     parallel 'centos7': {
       node {
         sh 'setup_centreon_build.sh'
-/*
+
         sh './centreon-build/jobs/connector/${serie}/mon-connector-unittest.sh centos7'
         step([
           $class: 'XUnitBuilder',
@@ -84,7 +84,7 @@ try {
           ],
           tools: [[$class: 'GoogleTestType', pattern: 'ut.xml']]
         ])
-*/
+
         if ((env.BUILD == 'RELEASE') || (env.BUILD == 'REFERENCE')) {
           withSonarQubeEnv('SonarQubeDev') {
             sh "./centreon-build/jobs/connector/${serie}/mon-connector-analysis.sh"
@@ -95,7 +95,7 @@ try {
     if ((currentBuild.result ?: 'SUCCESS') != 'SUCCESS') {
       error('Unit tests stage failure.');
     }
-  }
+  }*/
 
   stage('Package') {
     parallel 'centos7': {
