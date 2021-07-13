@@ -52,7 +52,7 @@ try {
         ])
 */
         if ((env.BUILD == 'RELEASE') || (env.BUILD == 'REFERENCE')) {
-          withSonarQubeEnv('SonarQube') {
+          withSonarQubeEnv('SonarQubeDev') {
             sh "./centreon-build/jobs/connector/${serie}/mon-connector-analysis.sh"
           }
         }
