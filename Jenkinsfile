@@ -1,12 +1,7 @@
 /*
 ** Variables.
 */
-<<<<<<< HEAD
 def serie = '21.04'
-=======
-properties([buildDiscarder(logRotator(numToKeepStr: '10'))])
-def serie = '21.10'
->>>>>>> 192b7a4 (fix(ci) Using right sonarqube instance to analyse code (#30))
 def maintenanceBranch = "${serie}.x"
 if (env.BRANCH_NAME.startsWith('release-')) {
   env.BUILD = 'RELEASE'
