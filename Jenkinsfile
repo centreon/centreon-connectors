@@ -11,15 +11,49 @@ if (env.BRANCH_NAME.startsWith('release-')) {
   env.BUILD = 'CI'
 }
 
+def buildBranch = env.BRANCH_NAME
+if (env.CHANGE_BRANCH) {
+  buildBranch = env.CHANGE_BRANCH
+}
+
+/*
+** Functions
+*/
+
+def isStableBuild() {
+  return ((env.BUILD == 'RELEASE') || (env.BUILD == 'REFERENCE'))
+}
+
+def checkoutCentreonBuild(buildBranch) {
+  def getCentreonBuildGitConfiguration = { branchName -> [
+    $class: 'GitSCM',
+    branches: [[name: "refs/heads/${branchName}"]],
+    doGenerateSubmoduleConfigurations: false,
+    userRemoteConfigs: [[
+      $class: 'UserRemoteConfig',
+      url: "ssh://git@github.com/centreon/centreon-build.git"
+    ]]
+  ]}
+
+  dir('centreon-build') {
+    try {
+      checkout(getCentreonBuildGitConfiguration(buildBranch))
+    } catch(e) {
+      echo "branch '${buildBranch}' does not exist in centreon-build, then fallback to master"
+      checkout(getCentreonBuildGitConfiguration('master'))
+    }
+  }
+}
+
 /*
 ** Pipeline code.
 */
 stage('Source') {
   node {
-    sh 'setup_centreon_build.sh'
     dir('centreon-connector') {
       checkout scm
     }
+    checkoutCentreonBuild(buildBranch)
     sh "./centreon-build/jobs/connector/${serie}/mon-connector-source.sh"
     source = readProperties file: 'source.properties'
     publishHTML([
@@ -36,7 +70,7 @@ stage('Source') {
 }
 
 try {
-  stage('Unit tests') {
+  stage('Sonar analysis') {
     parallel 'centos7': {
       node {
         sh 'setup_centreon_build.sh'
@@ -52,7 +86,7 @@ try {
         ])
 */
         if ((env.BUILD == 'RELEASE') || (env.BUILD == 'REFERENCE')) {
-          withSonarQubeEnv('SonarQube') {
+          withSonarQubeEnv('SonarQubeDev') {
             sh "./centreon-build/jobs/connector/${serie}/mon-connector-analysis.sh"
           }
         }
